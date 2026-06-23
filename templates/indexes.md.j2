@@ -1,0 +1,11 @@
+# Indexes: {{ schema.name }}
+
+{% if schema_indexes %}
+| Index | Table | Unique | Method | Definition |
+| --- | --- | :---: | --- | --- |
+{% for i in schema_indexes %}
+| `{{ i.name }}` | `{{ i.table }}` | {{ "yes" if i.is_unique else "no" }} | {{ i.method }} | `{{ i.definition }}` |
+{% endfor %}
+{% else %}
+_No indexes in this schema._
+{% endif %}

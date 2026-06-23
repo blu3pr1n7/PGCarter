@@ -1,0 +1,27 @@
+digraph relationships {
+    rankdir=LR;
+    node [shape=box, fontname="Helvetica"];
+
+    "customer_audit";
+    "public.active_customers";
+    "public.audit_log.id";
+    "public.audit_log_id_seq";
+    "public.audit_trigger";
+    "public.customer";
+    "public.customer.id";
+    "public.customer_counts";
+    "public.customer_id_seq";
+    "public.org";
+    "public.org.id";
+    "public.org_id_seq";
+
+    "public.customer" -> "public.org" [label="customer_org_id_fkey", color="#1f77b4"];
+    "public.customer" -> "customer_audit" [label="customer_audit", color="#ff7f0e"];
+    "customer_audit" -> "public.audit_trigger" [label="executes", color="#ff7f0e", style=dotted];
+    "public.audit_log_id_seq" -> "public.audit_log.id" [label="owned by", color="#9467bd", style=dotted];
+    "public.customer_id_seq" -> "public.customer.id" [label="owned by", color="#9467bd", style=dotted];
+    "public.org_id_seq" -> "public.org.id" [label="owned by", color="#9467bd", style=dotted];
+    "public.active_customers" -> "public.customer" [label="reads", color="#2ca02c", style=dashed];
+    "public.active_customers" -> "public.org" [label="reads", color="#2ca02c", style=dashed];
+    "public.customer_counts" -> "public.customer" [label="reads", color="#2ca02c", style=dashed];
+}

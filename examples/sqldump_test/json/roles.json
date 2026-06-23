@@ -1,0 +1,52 @@
+[
+  {
+    "name": "app_owner",
+    "superuser": false,
+    "createdb": false,
+    "createrole": false,
+    "inherit": true,
+    "login": false,
+    "replication": false,
+    "connection_limit": -1,
+    "member_of": [],
+    "comment": "Owns the application schema objects"
+  },
+  {
+    "name": "app_readonly",
+    "superuser": false,
+    "createdb": false,
+    "createrole": false,
+    "inherit": true,
+    "login": false,
+    "replication": false,
+    "connection_limit": -1,
+    "member_of": [],
+    "comment": null
+  },
+  {
+    "name": "app_readwrite",
+    "superuser": false,
+    "createdb": false,
+    "createrole": false,
+    "inherit": true,
+    "login": false,
+    "replication": false,
+    "connection_limit": -1,
+    "member_of": [
+      "app_readonly"
+    ],
+    "comment": null
+  },
+  {
+    "name": "sqldump",
+    "superuser": true,
+    "createdb": true,
+    "createrole": true,
+    "inherit": true,
+    "login": true,
+    "replication": true,
+    "connection_limit": -1,
+    "member_of": [],
+    "comment": null
+  }
+]

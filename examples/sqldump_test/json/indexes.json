@@ -1,0 +1,133 @@
+[
+  {
+    "schema": "public",
+    "name": "audit_log_pkey",
+    "table": "audit_log",
+    "definition": "CREATE UNIQUE INDEX audit_log_pkey ON audit_log USING btree (id)",
+    "is_unique": true,
+    "is_primary": true,
+    "is_constraint": true,
+    "method": "btree",
+    "columns": [
+      "id"
+    ],
+    "expressions": [],
+    "predicate": null
+  },
+  {
+    "schema": "public",
+    "name": "customer_active_idx",
+    "table": "customer",
+    "definition": "CREATE INDEX customer_active_idx ON customer USING btree (email) WHERE status = 'active'::text",
+    "is_unique": false,
+    "is_primary": false,
+    "is_constraint": false,
+    "method": "btree",
+    "columns": [
+      "email"
+    ],
+    "expressions": [],
+    "predicate": "status = 'active'::text"
+  },
+  {
+    "schema": "public",
+    "name": "customer_email_key",
+    "table": "customer",
+    "definition": "CREATE UNIQUE INDEX customer_email_key ON customer USING btree (email)",
+    "is_unique": true,
+    "is_primary": false,
+    "is_constraint": true,
+    "method": "btree",
+    "columns": [
+      "email"
+    ],
+    "expressions": [],
+    "predicate": null
+  },
+  {
+    "schema": "public",
+    "name": "customer_lower_email_idx",
+    "table": "customer",
+    "definition": "CREATE INDEX customer_lower_email_idx ON customer USING btree (lower(email))",
+    "is_unique": false,
+    "is_primary": false,
+    "is_constraint": false,
+    "method": "btree",
+    "columns": [],
+    "expressions": [],
+    "predicate": null
+  },
+  {
+    "schema": "public",
+    "name": "customer_org_idx",
+    "table": "customer",
+    "definition": "CREATE INDEX customer_org_idx ON customer USING btree (org_id)",
+    "is_unique": false,
+    "is_primary": false,
+    "is_constraint": false,
+    "method": "btree",
+    "columns": [
+      "org_id"
+    ],
+    "expressions": [],
+    "predicate": null
+  },
+  {
+    "schema": "public",
+    "name": "customer_pkey",
+    "table": "customer",
+    "definition": "CREATE UNIQUE INDEX customer_pkey ON customer USING btree (id)",
+    "is_unique": true,
+    "is_primary": true,
+    "is_constraint": true,
+    "method": "btree",
+    "columns": [
+      "id"
+    ],
+    "expressions": [],
+    "predicate": null
+  },
+  {
+    "schema": "public",
+    "name": "org_lower_name_uidx",
+    "table": "org",
+    "definition": "CREATE UNIQUE INDEX org_lower_name_uidx ON org USING btree (lower(name))",
+    "is_unique": true,
+    "is_primary": false,
+    "is_constraint": false,
+    "method": "btree",
+    "columns": [],
+    "expressions": [],
+    "predicate": null
+  },
+  {
+    "schema": "public",
+    "name": "org_name_key",
+    "table": "org",
+    "definition": "CREATE UNIQUE INDEX org_name_key ON org USING btree (name)",
+    "is_unique": true,
+    "is_primary": false,
+    "is_constraint": true,
+    "method": "btree",
+    "columns": [
+      "name"
+    ],
+    "expressions": [],
+    "predicate": null
+  },
+  {
+    "schema": "public",
+    "name": "org_pkey",
+    "table": "org",
+    "definition": "CREATE UNIQUE INDEX org_pkey ON org USING btree (id)",
+    "is_unique": true,
+    "is_primary": true,
+    "is_constraint": true,
+    "method": "btree",
+    "columns": [
+      "id"
+    ],
+    "expressions": [],
+    "predicate": null
+  }
+]

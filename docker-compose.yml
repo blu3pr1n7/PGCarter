@@ -1,0 +1,32 @@
+# Dedicated PostgreSQL instance for sql-dump e2e / integration tests.
+#
+# Runs on a non-default host port (55432) so it never collides with any local
+# PostgreSQL or other project containers. The seed script under
+# ./tests/fixtures is applied automatically on first boot, giving the
+# integration suite a rich schema (tables, views, functions, triggers,
+# sequences, extensions, roles, grants, indexes, constraints) to extract.
+#
+#   make db-up            # start and wait until healthy
+#   make test-integration # run the integration suite against it
+#   make db-down          # stop and remove (including the data volume)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sql-dump-test-db
+    environment:
+      POSTGRES_USER: sqldump
+      POSTGRES_PASSWORD: sqldump
+      POSTGRES_DB: sqldump_test
+    ports:
+      - "55432:5432"
+    volumes:
+      - ./tests/fixtures/seed.sql:/docker-entrypoint-initdb.d/01-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sqldump -d sqldump_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    tmpfs:
+      # Ephemeral storage: the database is disposable test scaffolding.
+      - /var/lib/postgresql/data

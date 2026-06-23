@@ -1,0 +1,103 @@
+[
+  {
+    "schema": "public",
+    "name": "audit_log_id_seq",
+    "owner": "sqldump",
+    "data_type": "bigint",
+    "start": 1,
+    "increment": 1,
+    "min_value": 1,
+    "max_value": 9223372036854775807,
+    "cache": 1,
+    "cycle": false,
+    "owned_by": "public.audit_log.id",
+    "is_identity": false,
+    "grants": []
+  },
+  {
+    "schema": "public",
+    "name": "customer_id_seq",
+    "owner": "sqldump",
+    "data_type": "bigint",
+    "start": 1,
+    "increment": 1,
+    "min_value": 1,
+    "max_value": 9223372036854775807,
+    "cache": 1,
+    "cycle": false,
+    "owned_by": "public.customer.id",
+    "is_identity": true,
+    "grants": []
+  },
+  {
+    "schema": "public",
+    "name": "invoice_number_seq",
+    "owner": "sqldump",
+    "data_type": "bigint",
+    "start": 1000,
+    "increment": 1,
+    "min_value": 1,
+    "max_value": 9223372036854775807,
+    "cache": 1,
+    "cycle": false,
+    "owned_by": null,
+    "is_identity": false,
+    "grants": [
+      {
+        "object_type": "sequence",
+        "object_name": "public.invoice_number_seq",
+        "grantee": "app_readwrite",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "sequence",
+        "object_name": "public.invoice_number_seq",
+        "grantee": "app_readwrite",
+        "privilege": "USAGE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "sequence",
+        "object_name": "public.invoice_number_seq",
+        "grantee": "sqldump",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "sequence",
+        "object_name": "public.invoice_number_seq",
+        "grantee": "sqldump",
+        "privilege": "UPDATE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "sequence",
+        "object_name": "public.invoice_number_seq",
+        "grantee": "sqldump",
+        "privilege": "USAGE",
+        "grantable": false,
+        "column": null
+      }
+    ]
+  },
+  {
+    "schema": "public",
+    "name": "org_id_seq",
+    "owner": "sqldump",
+    "data_type": "bigint",
+    "start": 1,
+    "increment": 1,
+    "min_value": 1,
+    "max_value": 9223372036854775807,
+    "cache": 1,
+    "cycle": false,
+    "owned_by": "public.org.id",
+    "is_identity": true,
+    "grants": []
+  }
+]

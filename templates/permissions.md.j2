@@ -1,0 +1,11 @@
+# Privileges
+
+{% if permissions %}
+| Object Type | Object | Grantee | Privilege | Column | Grantable |
+| --- | --- | --- | --- | --- | :---: |
+{% for g in permissions %}
+| {{ g.object_type }} | `{{ g.object_name }}` | `{{ g.grantee }}` | {{ g.privilege }} | {{ g.column or "" }} | {{ "yes" if g.grantable else "no" }} |
+{% endfor %}
+{% else %}
+_No explicit privileges were extracted._
+{% endif %}

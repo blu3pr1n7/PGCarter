@@ -1,0 +1,15 @@
+# Trigger: {{ trigger.schema }}.{{ trigger.name }}
+
+| Property | Value |
+| --- | --- |
+| Table | `{{ trigger.table }}` |
+| Timing | {{ trigger.timing }} |
+| Events | {{ trigger.events | join(", ") }} |
+| Function | `{{ trigger.function }}` |
+| Enabled | {{ "yes" if trigger.enabled else "no" }} |
+
+## Definition
+
+```sql
+{{ trigger.definition }}
+```

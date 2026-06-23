@@ -1,0 +1,11 @@
+# Roles
+
+{% if roles %}
+| Role | Login | Superuser | CreateDB | CreateRole | Inherit | Member Of |
+| --- | :---: | :---: | :---: | :---: | :---: | --- |
+{% for r in roles %}
+| `{{ r.name }}` | {{ "✓" if r.login else "" }} | {{ "✓" if r.superuser else "" }} | {{ "✓" if r.createdb else "" }} | {{ "✓" if r.createrole else "" }} | {{ "✓" if r.inherit else "" }} | {{ r.member_of | join(", ") }} |
+{% endfor %}
+{% else %}
+_No roles were extracted (insufficient privileges?)._
+{% endif %}

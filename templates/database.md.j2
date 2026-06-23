@@ -1,0 +1,30 @@
+# Database: {{ database.name }}
+
+| Property | Value |
+| --- | --- |
+| Name | `{{ database.name }}` |
+| Version | {{ database.version }} |
+| Encoding | `{{ database.encoding }}` |
+| Collation | `{{ database.collation }}` |
+| Ctype | `{{ database.ctype }}` |
+| Owner | `{{ database.owner }}` |
+{% if database.comment %}| Comment | {{ database.comment }} |{% endif %}
+
+## Extensions
+{% if extensions %}
+
+| Name | Version | Schema |
+| --- | --- | --- |
+{% for ext in extensions %}
+| `{{ ext.name }}` | {{ ext.version }} | `{{ ext.schema }}` |
+{% endfor %}
+{% else %}
+
+_No extensions installed._
+{% endif %}
+
+## Schemas
+
+{% for schema in schemas %}
+- [`{{ schema.name }}`](schemas/{{ schema.name }}/schema.md) — owner `{{ schema.owner }}`
+{% endfor %}

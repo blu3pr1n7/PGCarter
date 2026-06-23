@@ -1,0 +1,56 @@
+[
+  {
+    "source": "public.customer",
+    "target": "public.org",
+    "type": "foreign_key",
+    "label": "customer_org_id_fkey"
+  },
+  {
+    "source": "public.customer",
+    "target": "customer_audit",
+    "type": "trigger",
+    "label": "customer_audit"
+  },
+  {
+    "source": "customer_audit",
+    "target": "public.audit_trigger",
+    "type": "trigger_dependency",
+    "label": "executes"
+  },
+  {
+    "source": "public.audit_log_id_seq",
+    "target": "public.audit_log.id",
+    "type": "sequence",
+    "label": "owned by"
+  },
+  {
+    "source": "public.customer_id_seq",
+    "target": "public.customer.id",
+    "type": "sequence",
+    "label": "owned by"
+  },
+  {
+    "source": "public.org_id_seq",
+    "target": "public.org.id",
+    "type": "sequence",
+    "label": "owned by"
+  },
+  {
+    "source": "public.active_customers",
+    "target": "public.customer",
+    "type": "view_dependency",
+    "label": "reads"
+  },
+  {
+    "source": "public.active_customers",
+    "target": "public.org",
+    "type": "view_dependency",
+    "label": "reads"
+  },
+  {
+    "source": "public.customer_counts",
+    "target": "public.customer",
+    "type": "view_dependency",
+    "label": "reads"
+  }
+]

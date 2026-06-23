@@ -1,0 +1,39 @@
+{
+  "name": "public",
+  "owner": "pg_database_owner",
+  "comment": "standard public schema",
+  "grants": [
+    {
+      "object_type": "schema",
+      "object_name": "public",
+      "grantee": "PUBLIC",
+      "privilege": "USAGE",
+      "grantable": false,
+      "column": null
+    },
+    {
+      "object_type": "schema",
+      "object_name": "public",
+      "grantee": "app_readonly",
+      "privilege": "USAGE",
+      "grantable": false,
+      "column": null
+    },
+    {
+      "object_type": "schema",
+      "object_name": "public",
+      "grantee": "pg_database_owner",
+      "privilege": "CREATE",
+      "grantable": false,
+      "column": null
+    },
+    {
+      "object_type": "schema",
+      "object_name": "public",
+      "grantee": "pg_database_owner",
+      "privilege": "USAGE",
+      "grantable": false,
+      "column": null
+    }
+  ]
+}

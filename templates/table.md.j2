@@ -1,0 +1,41 @@
+# Table: {{ table.schema }}.{{ table.name }}
+
+Owner: `{{ table.owner }}` · Kind: {{ table.kind }}
+{% if table.comment %}
+
+> {{ table.comment }}
+{% endif %}
+
+## Columns
+
+| # | Name | Type | Nullable | Default | Notes |
+| ---: | --- | --- | :---: | --- | --- |
+{% for c in table.columns %}
+| {{ c.position }} | `{{ c.name }}` | `{{ c.data_type }}` | {{ "yes" if c.nullable else "no" }} | {{ ("`" ~ c.default ~ "`") if c.default else "" }} | {% if c.is_identity %}identity ({{ c.identity_generation }}){% endif %}{% if c.is_generated %}generated{% endif %}{% if c.comment %} — {{ c.comment }}{% endif %} |
+{% endfor %}
+
+{% if table.constraints %}
+## Constraints
+
+{% for con in table.constraints %}
+- **{{ con.type }}** `{{ con.name }}`: `{{ con.definition }}`
+{% endfor %}
+{% endif %}
+
+{% if table_indexes %}
+## Indexes
+
+{% for i in table_indexes %}
+- `{{ i.name }}`{% if i.is_unique %} (unique){% endif %} — `{{ i.definition }}`
+{% endfor %}
+{% endif %}
+
+{% if table.grants %}
+## Privileges
+
+| Grantee | Privilege | Grantable |
+| --- | --- | :---: |
+{% for g in table.grants %}
+| `{{ g.grantee }}` | {{ g.privilege }}{% if g.column %} ({{ g.column }}){% endif %} | {{ "yes" if g.grantable else "no" }} |
+{% endfor %}
+{% endif %}

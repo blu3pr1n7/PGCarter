@@ -1,0 +1,16 @@
+[
+  {
+    "schema": "public",
+    "name": "customer_audit",
+    "table": "customer",
+    "definition": "CREATE TRIGGER customer_audit AFTER INSERT OR DELETE OR UPDATE ON customer FOR EACH ROW EXECUTE FUNCTION audit_trigger()",
+    "timing": "AFTER",
+    "events": [
+      "INSERT",
+      "UPDATE",
+      "DELETE"
+    ],
+    "function": "public.audit_trigger",
+    "enabled": true
+  }
+]

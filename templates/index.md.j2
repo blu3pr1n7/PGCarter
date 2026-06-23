@@ -1,0 +1,29 @@
+# {{ database.name }} — Database Inventory
+
+Generated: {{ generated_at }}
+
+PostgreSQL **{{ database.version }}** · Encoding `{{ database.encoding }}` · Owner `{{ database.owner }}`
+
+## Contents
+
+- [Database overview](database.md)
+{% for schema in schemas %}
+- Schema [`{{ schema.name }}`](schemas/{{ schema.name }}/schema.md)
+{% endfor %}
+{% if roles %}- [Roles](roles.md){% endif %}
+
+## Summary
+
+| Asset | Count |
+| --- | ---: |
+| Schemas | {{ schemas | length }} |
+| Tables | {{ tables | length }} |
+| Indexes | {{ indexes | length }} |
+| Views | {{ views | length }} |
+| Functions | {{ functions | length }} |
+| Triggers | {{ triggers | length }} |
+| Sequences | {{ sequences | length }} |
+| Extensions | {{ extensions | length }} |
+| Roles | {{ roles | length }} |
+| Grants | {{ permissions | length }} |
+| Relationships | {{ relationships | length }} |

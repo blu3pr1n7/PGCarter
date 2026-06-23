@@ -1,0 +1,32 @@
+# Function: {{ function.schema }}.{{ function.signature }}
+
+| Property | Value |
+| --- | --- |
+| Kind | {{ function.kind }} |
+| Language | {{ function.language }} |
+| Returns | {{ function.return_type or "—" }} |
+| Volatility | {{ function.volatility }} |
+| Security | {{ "DEFINER" if function.security_definer else "INVOKER" }} |
+| Owner | `{{ function.owner }}` |
+{% if function.comment %}
+
+> {{ function.comment }}
+{% endif %}
+
+{% if function.parameters %}
+## Parameters
+
+| Name | Mode | Type |
+| --- | --- | --- |
+{% for p in function.parameters %}
+| `{{ p.name or "" }}` | {{ p.mode }} | `{{ p.data_type }}` |
+{% endfor %}
+{% endif %}
+
+{% if function.definition %}
+## Definition
+
+```sql
+{{ function.definition }}
+```
+{% endif %}

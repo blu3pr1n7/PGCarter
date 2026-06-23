@@ -1,0 +1,21 @@
+# {% if view.materialized %}Materialized View{% else %}View{% endif %}: {{ view.schema }}.{{ view.name }}
+
+Owner: `{{ view.owner }}`
+{% if view.comment %}
+
+> {{ view.comment }}
+{% endif %}
+
+{% if view.columns %}
+## Columns
+
+{% for c in view.columns %}
+- `{{ c }}`
+{% endfor %}
+{% endif %}
+
+## Definition
+
+```sql
+{{ view.definition }}
+```

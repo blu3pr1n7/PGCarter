@@ -1,0 +1,53 @@
+# Schema: {{ schema.name }}
+
+Owner: `{{ schema.owner }}`
+{% if schema.comment %}
+
+> {{ schema.comment }}
+{% endif %}
+
+## Tables ({{ schema_tables | length }})
+
+{% if schema_tables %}
+| Table | Columns | Comment |
+| --- | ---: | --- |
+{% for t in schema_tables %}
+| [`{{ t.name }}`](tables/{{ t.name }}.md) | {{ t.columns | length }} | {{ t.comment or "" }} |
+{% endfor %}
+{% else %}
+_No tables._
+{% endif %}
+
+## Views ({{ schema_views | length }})
+
+{% if schema_views %}
+{% for v in schema_views %}
+- [`{{ v.name }}`](views/{{ v.name }}.md){% if v.materialized %} _(materialized)_{% endif %}
+{% endfor %}
+{% else %}
+_No views._
+{% endif %}
+
+## Functions ({{ schema_functions | length }})
+
+{% if schema_functions %}
+{% for f in schema_functions %}
+- [`{{ f.signature }}`](functions/{{ f.name }}.md) → {{ f.return_type or f.kind }}
+{% endfor %}
+{% else %}
+_No functions._
+{% endif %}
+
+## Triggers ({{ schema_triggers | length }})
+
+{% if schema_triggers %}
+{% for t in schema_triggers %}
+- [`{{ t.name }}`](triggers/{{ t.name }}.md) on `{{ t.table }}` ({{ t.timing }} {{ t.events | join(", ") }})
+{% endfor %}
+{% else %}
+_No triggers._
+{% endif %}
+
+## Indexes ({{ schema_indexes | length }})
+
+See [indexes overview](indexes/indexes.md).
