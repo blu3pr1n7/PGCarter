@@ -12,3 +12,4 @@ wheels/
 dumps/
 .idea/*
 prompt/*
+.env.*
