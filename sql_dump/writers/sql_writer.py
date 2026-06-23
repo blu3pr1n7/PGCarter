@@ -10,10 +10,10 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
-from ..models import Inventory
-from ..report import Report
-from ..sql import generators as gen
-from ..sql.base import with_header
+from sql_dump.models import Inventory
+from sql_dump.report import Report
+from sql_dump.sql import generators as gen
+from sql_dump.sql.base import with_header
 
 _SAFE = re.compile(r"[^A-Za-z0-9_]+")
 

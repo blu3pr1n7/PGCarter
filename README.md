@@ -55,8 +55,11 @@ pip install -e ".[dev]"
 
 ## Usage
 
+The CLI (built with [Typer](https://typer.tiangolo.com/)) has two subcommands:
+`index` (schema extraction) and `analyze` (shape analysis & profiling).
+
 ```bash
-sql-dump \
+sql-dump index \
   --host localhost \
   --port 5432 \
   --database mydb \
@@ -203,7 +206,7 @@ two modes.
 
 ### Offline mode (structure only, no database)
 
-Analyse an existing JSON inventory with no connection. Identifies possible
+Analyze an existing JSON inventory with no connection. Identifies possible
 checks from table structure, column names, data types, constraints,
 relationships, and indexes — and records the exact read-only SQL each check
 *would* run online.
@@ -236,6 +239,7 @@ sql-dump analyze \
 | `--templates-dir` | `./templates` | Jinja2 templates for analysis docs |
 | `--config` | — | analysis YAML (enabled checks, thresholds) |
 | `--sample-size` | — | row cap for expensive per-column scans |
+| `--statement-timeout` | `0` | per-query timeout (ms); an overrun is logged and skipped |
 
 Provide `--input` (offline), `--database` (online), or both (use the JSON as the
 inventory base while connecting for statistics).
@@ -281,6 +285,20 @@ relevant `sql_dump/analyzer/checks/` module. Categories:
 
 Each finding has a severity (`info`/`warning`/`critical`); warnings and
 criticals are collected into `warnings.json`.
+
+### Resilience & progress
+
+Online runs degrade gracefully. A table the connecting role cannot read
+(`permission denied`), a missing object, or a query that exceeds
+`--statement-timeout` is **logged as a single warning and skipped** — recorded
+under `skipped` in `run-report.json`, never escalated to a run error (the exit
+code stays `0`). The denied relation is remembered, so its remaining columns are
+skipped without further round trips, and it still receives structural analysis.
+Per-table progress is logged (`[n/N] analyzing …`) so long runs are observable.
+
+For large databases, prefer `--sample-size` (bounds per-column scans) and
+`--statement-timeout` (caps any single query); together they keep a run bounded
+and visible.
 
 ### Query safety & performance
 
@@ -348,7 +366,7 @@ category.
 ```bash
 make db-up             # start the test DB and wait until healthy
 make test-integration  # run integration tests against it
-make e2e               # run the extraction CLI end-to-end into ./build/e2e
+make e2e               # run the index CLI end-to-end into ./build/e2e
 make e2e-analyze       # run an online analysis into ./build/analysis
 make test-all          # unit + integration
 make db-down           # tear down (removes the data)
@@ -361,7 +379,7 @@ generated `apply.sql` replays cleanly into a fresh database.
 
 ```
 sql_dump/
-├── cli.py            # argparse entry point (dispatches the analyze subcommand)
+├── cli.py            # Typer entry point (index + analyze subcommands)
 ├── config.py         # configuration + defaults
 ├── main.py           # orchestration
 ├── report.py         # run report
@@ -372,7 +390,7 @@ sql_dump/
 ├── docs/             # Jinja2 renderer (no SQL)
 ├── writers/          # SQL / JSON / DOT / apply.sql writers
 └── analyzer/         # database shape analysis & profiling
-    ├── cli.py        #   analyze subcommand
+    ├── runner.py     #   analyze orchestration (offline/online)
     ├── config.py     #   analysis config (enabled checks, thresholds)
     ├── models.py     #   analysis result models
     ├── heuristics.py #   column name/type semantics

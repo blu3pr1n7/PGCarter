@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..models import Relationship
-from ..report import Report
+from sql_dump.models import Relationship
+from sql_dump.report import Report
 
 _STYLE = {
     "foreign_key": 'color="#1f77b4"',

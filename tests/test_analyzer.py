@@ -284,6 +284,35 @@ def test_online_analysis_enriches_with_stats(sample_inventory):
     assert email.stats["distinct_values"] == 900
 
 
+def test_permission_denied_is_skipped_not_fatal(sample_inventory):
+    """A permission error logs-and-skips the relation; the run still succeeds."""
+    import psycopg
+
+    class DeniedDB:
+        def __init__(self) -> None:
+            self.calls = 0
+
+        def query(self, sql: str, params: Any = None) -> list[dict[str, Any]]:
+            self.calls += 1
+            raise psycopg.errors.InsufficientPrivilege(
+                "permission denied for table customer"
+            )
+
+    db = DeniedDB()
+    run_report = Report()
+    report = AnalysisEngine(
+        sample_inventory, AnalysisConfig(), db=db, report=run_report
+    ).analyze()
+
+    # No run errors — the denial is recorded as a skip, not an error.
+    assert run_report.errors == []
+    assert report.mode == "online"
+    # The relation is recorded exactly once, not once per failing query/column.
+    customer_skips = [s for s in run_report.skipped if s.object_name == "customer"]
+    assert len(customer_skips) == 1
+    assert "permission denied" in customer_skips[0].reason
+
+
 def test_online_detects_critical_duplicate(sample_inventory):
     class DupDB(FakeDB):
         RESPONSES = {**FakeDB.RESPONSES, "duplicate_groups": [

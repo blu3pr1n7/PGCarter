@@ -19,7 +19,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from ..sql.base import qualified, quote_ident
+from sql_dump.sql.base import qualified, quote_ident
 
 _QUERY_DIR = Path(__file__).parent / "queries"
 

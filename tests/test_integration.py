@@ -94,7 +94,7 @@ def test_online_analysis_against_live_db(tmp_path):
         analysis = AnalysisEngine(inventory, analysis_cfg, db=db, report=report).analyze()
 
     assert analysis.mode == "online"
-    assert analysis.tables, "expected at least one analysed table"
+    assert analysis.tables, "expected at least one analyzed table"
 
     # At least one table should have measured size/row metrics from the DB.
     assert any("estimated_rows" in t.metrics for t in analysis.tables)

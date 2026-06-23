@@ -7,11 +7,11 @@ foreign key points at a missing parent) needs data and runs online.
 
 from __future__ import annotations
 
-from ...models import Constraint, Inventory, Table
-from ...sql.base import qualified, quote_ident
-from ..models import CRITICAL, INFO, WARNING, CheckResult
-from ..queries import assert_safe, quote_literal, render_template
-from ..rules import AnalysisContext, DatabaseCheck, constraint_columns, register
+from sql_dump.analyzer.models import CRITICAL, INFO, WARNING, CheckResult
+from sql_dump.analyzer.queries import assert_safe, quote_literal, render_template
+from sql_dump.analyzer.rules import AnalysisContext, DatabaseCheck, constraint_columns, register
+from sql_dump.models import Constraint, Inventory, Table
+from sql_dump.sql.base import qualified, quote_ident
 
 
 @register

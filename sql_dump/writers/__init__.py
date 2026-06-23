@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..models import Inventory
-from ..report import Report
-from .apply import write_apply
-from .graph import write_dot
-from .json_writer import JsonWriter
-from .sql_writer import SqlWriter
+from sql_dump.models import Inventory
+from sql_dump.report import Report
+from sql_dump.writers.apply import write_apply
+from sql_dump.writers.graph import write_dot
+from sql_dump.writers.json_writer import JsonWriter
+from sql_dump.writers.sql_writer import SqlWriter
 
 __all__ = ["JsonWriter", "SqlWriter", "write_apply", "write_dot", "write_outputs"]
 

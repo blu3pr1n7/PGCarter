@@ -13,10 +13,10 @@ schema-qualified identifiers; see :mod:`sql_dump.analyzer.queries`.
 
 from __future__ import annotations
 
-from .config import AnalysisConfig, Thresholds, load_analysis_config
-from .engine import AnalysisEngine
-from .loader import load_inventory
-from .models import (
+from sql_dump.analyzer.config import AnalysisConfig, Thresholds, load_analysis_config
+from sql_dump.analyzer.engine import AnalysisEngine
+from sql_dump.analyzer.loader import load_inventory
+from sql_dump.analyzer.models import (
     AnalysisReport,
     CheckResult,
     ColumnAnalysis,

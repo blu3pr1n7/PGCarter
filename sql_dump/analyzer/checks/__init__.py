@@ -8,6 +8,6 @@ a module here and add it to the imports below; to add a single check, drop a new
 
 from __future__ import annotations
 
-from . import columns, indexes, quality, relationships, statistics, tables
+from sql_dump.analyzer.checks import columns, indexes, quality, relationships, statistics, tables
 
 __all__ = ["columns", "indexes", "quality", "relationships", "statistics", "tables"]

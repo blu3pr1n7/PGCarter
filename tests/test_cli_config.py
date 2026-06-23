@@ -4,9 +4,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from sql_dump.cli import build_parser
+from typer.testing import CliRunner
+
+from sql_dump.cli import app
 from sql_dump.config import resolve_config
 from sql_dump.report import Report
+
+runner = CliRunner()
 
 
 def test_output_dir_defaults_to_database_name():
@@ -46,17 +50,47 @@ def test_conninfo_includes_core_fields():
     assert "password=secret" in info
 
 
-def test_parser_requires_database():
-    parser = build_parser()
-    ns = parser.parse_args(["--database", "db"])
-    assert ns.database == "db"
-    assert ns.port == 5432
+def test_cli_exposes_index_and_analyze_subcommands():
+    result = runner.invoke(app, ["--help"])
+    assert result.exit_code == 0
+    assert "index" in result.output
+    assert "analyze" in result.output
 
 
-def test_parser_repeatable_schema():
-    parser = build_parser()
-    ns = parser.parse_args(["--database", "db", "--schema", "public", "--schema", "app"])
-    assert ns.schemas == ["public", "app"]
+def test_index_requires_database():
+    # Missing the required --database option is a usage error (exit code 2).
+    result = runner.invoke(app, ["index"])
+    assert result.exit_code == 2
+    assert "database" in result.output.lower()
+
+
+def test_analyze_requires_input_or_database():
+    result = runner.invoke(app, ["analyze", "--output", "ignored"])
+    assert result.exit_code != 0  # usage error: neither --input nor --database
+
+
+def test_analyze_offline_runs_end_to_end(tmp_path, sample_inventory):
+    from sql_dump.report import Report as _Report
+    from sql_dump.writers.json_writer import JsonWriter
+
+    inventory_dir = tmp_path / "inv"
+    JsonWriter(inventory_dir / "json", _Report()).write(sample_inventory)
+    out = tmp_path / "analysis"
+
+    result = runner.invoke(
+        app,
+        [
+            "analyze",
+            "--input", str(inventory_dir),
+            "--output", str(out),
+            "--templates-dir", "./templates",
+            "--log-level", "WARNING",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert (out / "report.json").is_file()
+    assert (out / "warnings.json").is_file()
+    assert (out / "docs" / "analysis" / "index.md").is_file()
 
 
 def test_report_accumulates_and_serialises(tmp_path):

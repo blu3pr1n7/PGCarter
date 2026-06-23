@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from ..logging_config import get_logger
-from ..report import Report
-from .connection import Database
+from sql_dump.extractor.connection import Database
+from sql_dump.logging_config import get_logger
+from sql_dump.report import Report
 
 
 class Extractor:

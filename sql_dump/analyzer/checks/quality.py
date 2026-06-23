@@ -8,10 +8,10 @@ These run online. "Unused table" detection is structural and runs offline.
 
 from __future__ import annotations
 
-from ...models import Inventory, Table
-from ..models import CRITICAL, INFO, WARNING, CheckResult
-from ..queries import duplicate_values_sql
-from ..rules import AnalysisContext, DatabaseCheck, constraint_columns, register
+from sql_dump.analyzer.models import CRITICAL, INFO, WARNING, CheckResult
+from sql_dump.analyzer.queries import duplicate_values_sql
+from sql_dump.analyzer.rules import AnalysisContext, DatabaseCheck, constraint_columns, register
+from sql_dump.models import Inventory, Table
 
 
 def _duplicate_check(

@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from ..models import Inventory
-from ..report import Report
+from sql_dump.models import Inventory
+from sql_dump.report import Report
 
 
 def _write(path: Path, data: Any, report: Report) -> None:

@@ -47,8 +47,8 @@ test-all: db-up  ## Run the full suite (unit + integration) against the test DB
 coverage:  ## Run tests with coverage report
 	$(PYTHON) -m pytest -m "not integration" --cov=sql_dump --cov-report=term-missing
 
-run:  ## Run sql-dump (pass ARGS="--database mydb ...")
-	$(PYTHON) -m sql_dump.cli $(ARGS)
+run:  ## Run sql-dump index (pass ARGS="--database mydb ...")
+	$(PYTHON) -m sql_dump.cli index $(ARGS)
 
 analyze:  ## Run sql-dump analyze (pass ARGS="--input ./json ..." or "--database ...")
 	$(PYTHON) -m sql_dump.cli analyze $(ARGS)
@@ -67,9 +67,9 @@ db-logs:  ## Tail the test database logs
 db-psql:  ## Open a psql shell in the test database
 	$(COMPOSE) exec postgres psql -U $(SQLDUMP_TEST_USER) -d $(SQLDUMP_TEST_DB)
 
-e2e: db-up  ## Run the CLI end-to-end against the test DB into ./build/e2e
+e2e: db-up  ## Run the index CLI end-to-end against the test DB into ./build/e2e
 	rm -rf build/e2e
-	$(PYTHON) -m sql_dump.cli \
+	$(PYTHON) -m sql_dump.cli index \
 		--host $(SQLDUMP_TEST_HOST) --port $(SQLDUMP_TEST_PORT) \
 		--database $(SQLDUMP_TEST_DB) --user $(SQLDUMP_TEST_USER) \
 		--password $(SQLDUMP_TEST_PASSWORD) \

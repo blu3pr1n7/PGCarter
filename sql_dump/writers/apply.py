@@ -11,10 +11,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..models import Inventory, Table, View
-from ..report import Report
-from ..sql import generators as gen
-from ..sql.base import header
+from sql_dump.models import Inventory, Table, View
+from sql_dump.report import Report
+from sql_dump.sql import generators as gen
+from sql_dump.sql.base import header
 
 
 def _toposort(names: list[str], edges: dict[str, set[str]]) -> list[str]:

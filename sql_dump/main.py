@@ -5,12 +5,12 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from pathlib import Path
 
-from .config import Config
-from .docs import DocumentationRenderer
-from .extractor import Database, InventoryExtractor
-from .logging_config import get_logger
-from .report import Report
-from .writers import write_outputs
+from sql_dump.config import Config
+from sql_dump.docs import DocumentationRenderer
+from sql_dump.extractor import Database, InventoryExtractor
+from sql_dump.logging_config import get_logger
+from sql_dump.report import Report
+from sql_dump.writers import write_outputs
 
 log = get_logger(__name__)
 

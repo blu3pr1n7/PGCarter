@@ -13,13 +13,9 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Any
 
-from ..extractor.connection import Database
-from ..logging_config import get_logger
-from ..models import Inventory
-from ..report import Report
-from .config import AnalysisConfig
-from .heuristics import detect_semantics
-from .models import (
+from sql_dump.analyzer.config import AnalysisConfig
+from sql_dump.analyzer.heuristics import detect_semantics
+from sql_dump.analyzer.models import (
     INFO,
     AnalysisReport,
     CheckResult,
@@ -28,7 +24,11 @@ from .models import (
     Warning,
     severity_rank,
 )
-from .rules import AnalysisContext, Check, instantiate_checks
+from sql_dump.analyzer.rules import AnalysisContext, Check, instantiate_checks
+from sql_dump.extractor.connection import Database
+from sql_dump.logging_config import get_logger
+from sql_dump.models import Inventory
+from sql_dump.report import Report
 
 log = get_logger("sql_dump.analyzer.engine")
 
@@ -45,7 +45,7 @@ class AnalysisEngine:
     ) -> None:
         self.inventory = inventory
         self.config = config
-        self.ctx = AnalysisContext(inventory=inventory, config=config, db=db)
+        self.ctx = AnalysisContext(inventory=inventory, config=config, db=db, report=report)
         self.report = report
 
     # -- check execution with per-check resilience --------------------------
@@ -77,7 +77,21 @@ class AnalysisEngine:
         analyses: dict[str, TableAnalysis] = {}
         all_results: list[CheckResult] = []
 
-        for table in self.inventory.tables:
+        total_tables = len(self.inventory.tables)
+        for index, table in enumerate(self.inventory.tables, start=1):
+            queried = (
+                f"; {len(self.ctx.generated_queries)} queries so far"
+                if self.ctx.online
+                else ""
+            )
+            log.info(
+                "[%d/%d] analyzing %s (%d columns)%s",
+                index,
+                total_tables,
+                table.qualified_name,
+                len(table.columns),
+                queried,
+            )
             ta = TableAnalysis(schema=table.schema, name=table.name)
             for check in table_checks:
                 for r in self._safe_execute(check, table):
@@ -100,7 +114,10 @@ class AnalysisEngine:
             analyses[ta.qualified_name] = ta
 
         # Database-scope checks (relationships, indexes, cross-table quality).
-        for check in database_checks:
+        for index, check in enumerate(database_checks, start=1):
+            log.info(
+                "[db %d/%d] running %s", index, len(database_checks), check.name
+            )
             for r in self._safe_execute(check, self.inventory):
                 all_results.append(r)
                 if r.table and r.table in analyses:

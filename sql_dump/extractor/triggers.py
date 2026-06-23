@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from ..models import Trigger
-from .base import Extractor
+from sql_dump.extractor.base import Extractor
+from sql_dump.models import Trigger
 
 # tgtype bitmask (see catalog/pg_trigger.h)
 _ROW = 1 << 0

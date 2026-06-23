@@ -11,8 +11,21 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from ..logging_config import get_logger
-from ..models import (
+from sql_dump.extractor.connection import Database
+from sql_dump.extractor.database import DatabaseExtractor
+from sql_dump.extractor.extensions import ExtensionExtractor
+from sql_dump.extractor.functions import FunctionExtractor
+from sql_dump.extractor.indexes import IndexExtractor
+from sql_dump.extractor.permissions import PermissionExtractor
+from sql_dump.extractor.relationships import RelationshipExtractor
+from sql_dump.extractor.roles import RoleExtractor
+from sql_dump.extractor.schemas import SchemaExtractor
+from sql_dump.extractor.sequences import SequenceExtractor
+from sql_dump.extractor.tables import TableExtractor
+from sql_dump.extractor.triggers import TriggerExtractor
+from sql_dump.extractor.views import ViewExtractor
+from sql_dump.logging_config import get_logger
+from sql_dump.models import (
     Function,
     Grant,
     Inventory,
@@ -21,20 +34,7 @@ from ..models import (
     Table,
     View,
 )
-from ..report import Report
-from .connection import Database
-from .database import DatabaseExtractor
-from .extensions import ExtensionExtractor
-from .functions import FunctionExtractor
-from .indexes import IndexExtractor
-from .permissions import PermissionExtractor
-from .relationships import RelationshipExtractor
-from .roles import RoleExtractor
-from .schemas import SchemaExtractor
-from .sequences import SequenceExtractor
-from .tables import TableExtractor
-from .triggers import TriggerExtractor
-from .views import ViewExtractor
+from sql_dump.report import Report
 
 log = get_logger(__name__)
 

@@ -6,8 +6,8 @@ sequence ownership) plus a catalog query for view dependencies.
 
 from __future__ import annotations
 
-from ..models import Function, Relationship, Sequence, Table, Trigger
-from .base import Extractor
+from sql_dump.extractor.base import Extractor
+from sql_dump.models import Function, Relationship, Sequence, Table, Trigger
 
 _VIEW_DEPS = """
 SELECT DISTINCT

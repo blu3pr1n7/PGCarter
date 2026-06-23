@@ -17,17 +17,36 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..extractor.connection import Database
-from ..logging_config import get_logger
-from ..models import Column, Constraint, Index, Inventory, Table
-from .config import AnalysisConfig
-from .models import CheckResult
-from .queries import assert_safe, relation
+import psycopg
+
+from sql_dump.analyzer.config import AnalysisConfig
+from sql_dump.analyzer.models import CheckResult
+from sql_dump.analyzer.queries import assert_safe, relation
+from sql_dump.extractor.connection import Database
+from sql_dump.logging_config import get_logger
+from sql_dump.models import Column, Constraint, Index, Inventory, Table
+from sql_dump.report import Report
+from sql_dump.sql.base import quote_ident
 
 log = get_logger("sql_dump.analyzer.rules")
 
 # An asset passed to a column-scope check.
 ColumnAsset = tuple[Table, Column]
+
+# Database errors that mean "this object can't be profiled" rather than "the run
+# is broken". They are logged and skipped — never escalated to a run error.
+_GRACEFUL_DB_ERRORS: tuple[type[Exception], ...] = (
+    psycopg.errors.InsufficientPrivilege,
+    psycopg.errors.UndefinedTable,
+    psycopg.errors.UndefinedColumn,
+    psycopg.errors.UndefinedObject,
+    psycopg.errors.QueryCanceled,  # statement_timeout / cancellation
+)
+
+_DENIED_RE = re.compile(
+    r'permission denied for (?:table|relation|view|sequence|materialized view)\s+"?([^"\s]+)"?',
+    re.IGNORECASE,
+)
 
 
 @dataclass
@@ -37,8 +56,11 @@ class AnalysisContext:
     inventory: Inventory
     config: AnalysisConfig
     db: Database | None = None
+    report: Report | None = None
     #: Accumulates every distinct query string the run generated (for auditing).
     generated_queries: list[str] = field(default_factory=list)
+    #: Relations that returned a permission/undefined error — skipped thereafter.
+    inaccessible: set[str] = field(default_factory=set)
     #: Memoises results so checks issuing identical SQL share one round trip.
     _cache: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
 
@@ -61,15 +83,51 @@ class AnalysisContext:
 
         Returns the rows online, or ``None`` offline (the query is still
         recorded so the report documents what would have been measured).
+
+        A permission/undefined-object error is **not** fatal: it is logged as a
+        single warning, the relation is remembered so its remaining columns are
+        skipped without further round trips, and ``None`` is returned so the
+        check degrades to structural-only — exactly as it would offline.
         """
         assert_safe(sql)
         if sql not in self.generated_queries:
             self.generated_queries.append(sql)
         if self.db is None:
             return None
-        if sql not in self._cache:
-            self._cache[sql] = self.db.query(sql)
-        return self._cache[sql]
+        if self._references_inaccessible(sql):
+            return None
+        if sql in self._cache:
+            return self._cache[sql]
+        try:
+            rows = self.db.query(sql)
+        except _GRACEFUL_DB_ERRORS as exc:
+            self._note_inaccessible(exc)
+            return None
+        self._cache[sql] = rows
+        return rows
+
+    def _references_inaccessible(self, sql: str) -> bool:
+        return any(quote_ident(name) in sql for name in self.inaccessible)
+
+    def _note_inaccessible(self, exc: Exception) -> None:
+        """Log-and-skip a permission/undefined error (never a run error)."""
+        message = str(exc).strip().splitlines()[0] if str(exc).strip() else exc.__class__.__name__
+        name = getattr(getattr(exc, "diag", None), "table_name", None)
+        if not name:
+            match = _DENIED_RE.search(message)
+            name = match.group(1) if match else None
+
+        if name:
+            if name in self.inaccessible:
+                return  # already logged for this relation
+            self.inaccessible.add(name)
+            log.warning("Skipping profiling for '%s': %s", name, message)
+            if self.report is not None:
+                self.report.record_skipped("table", name, message)
+        else:
+            log.warning("Skipping a profiling query: %s", message)
+            if self.report is not None:
+                self.report.record_skipped("query", "?", message)
 
     def run_one(self, sql: str) -> dict[str, Any] | None:
         rows = self.run(sql)
@@ -206,6 +264,6 @@ def registered_checks() -> list[type[Check]]:
 def instantiate_checks(config: AnalysisConfig) -> list[Check]:
     """Instantiate the enabled checks for a run, importing plugins first."""
     # Importing the package registers every check via the @register decorator.
-    from . import checks  # noqa: F401  (side-effect import)
+    from sql_dump.analyzer import checks  # noqa: F401  (side-effect import)
 
     return [cls() for cls in _REGISTRY if config.is_enabled(cls.name)]

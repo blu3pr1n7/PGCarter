@@ -13,9 +13,9 @@ from typing import Any
 
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound, select_autoescape
 
-from ..logging_config import get_logger
-from ..models import Inventory
-from ..report import Report
+from sql_dump.logging_config import get_logger
+from sql_dump.models import Inventory
+from sql_dump.report import Report
 
 log = get_logger(__name__)
 

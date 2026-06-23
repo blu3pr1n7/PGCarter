@@ -1,99 +1,174 @@
-"""Command-line interface for sql-dump."""
+"""Command-line interface for sql-dump (Typer).
 
-from __future__ import annotations
+Two subcommands:
 
-import argparse
-import sys
+* ``index``   — connect to PostgreSQL and produce the schema inventory:
+  executable SQL, JSON metadata, and template-driven documentation.
+* ``analyze`` — database shape analysis & profiling, offline (from a JSON
+  inventory) or online (connecting for statistics).
 
-from .config import resolve_config
-from .logging_config import configure_logging, get_logger
-from .main import run
+Exit codes (per subcommand): ``0`` success, ``2`` completed with recorded
+errors, ``1`` fatal error.
+"""
+
+from enum import StrEnum
+from pathlib import Path
+
+import typer
+
+from sql_dump.analyzer.runner import AnalysisInputError, run_analysis
+from sql_dump.config import resolve_config
+from sql_dump.logging_config import configure_logging, get_logger
+from sql_dump.main import run
+from sql_dump.report import Report
 
 log = get_logger(__name__)
 
 
-def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        prog="sql-dump",
-        description="PostgreSQL schema inventory, SQL extraction, and documentation "
-                    "generation tool. Extracts schema/metadata only — never table data. "
-                    "Use the 'analyze' subcommand for database shape analysis and profiling.",
-    )
-    parser.add_argument("--host", default="localhost", help="Database host (default: localhost)")
-    parser.add_argument("--port", type=int, default=5432, help="Database port (default: 5432)")
-    parser.add_argument("--database", required=True, help="Database name to inventory")
-    parser.add_argument("--user", default="postgres", help="Database user (default: postgres)")
-    parser.add_argument(
-        "--password",
-        default=None,
-        help="Database password (falls back to the PGPASSWORD environment variable)",
-    )
-    parser.add_argument(
-        "--output-dir",
-        default=None,
-        help="Output directory (default: the database name)",
-    )
-    parser.add_argument(
-        "--templates-dir",
-        default=None,
-        help="Jinja2 templates directory (default: ./templates)",
-    )
-    parser.add_argument(
-        "--schema",
-        dest="schemas",
-        action="append",
-        default=None,
-        help="Schema to extract (repeatable; default: public)",
-    )
-    parser.add_argument(
-        "--log-level",
-        default="INFO",
-        choices=["DEBUG", "INFO", "WARNING", "ERROR"],
-        help="Logging verbosity (default: INFO)",
-    )
-    parser.add_argument(
-        "--json-logs",
-        action="store_true",
-        help="Emit structured JSON logs instead of human-readable text",
-    )
-    return parser
+class LogLevel(StrEnum):
+    DEBUG = "DEBUG"
+    INFO = "INFO"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
 
 
-def main(argv: list[str] | None = None) -> int:
-    argv = sys.argv[1:] if argv is None else argv
+app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    help=(
+        "PostgreSQL schema inventory, SQL extraction, documentation, and "
+        "database shape analysis. Extracts schema/metadata only — never table "
+        "data."
+    ),
+)
 
-    # ``sql-dump analyze ...`` routes to the analysis subsystem. The default
-    # (no subcommand) preserves the original extraction CLI verbatim.
-    if argv and argv[0] == "analyze":
-        from .analyzer.cli import analyze_main
 
-        return analyze_main(argv[1:])
-
-    args = build_parser().parse_args(argv)
-    configure_logging(args.log_level, json_format=args.json_logs)
+@app.command()
+def index(
+    database: str = typer.Option(..., "--database", help="Database name to inventory"),
+    host: str = typer.Option("localhost", "--host", help="Database host"),
+    port: int = typer.Option(5432, "--port", help="Database port"),
+    user: str = typer.Option("postgres", "--user", help="Database user"),
+    password: str | None = typer.Option(
+        None, "--password", help="Database password (falls back to PGPASSWORD)"
+    ),
+    output_dir: str | None = typer.Option(
+        None, "--output-dir", help="Output directory (default: the database name)"
+    ),
+    templates_dir: str | None = typer.Option(
+        None, "--templates-dir", help="Jinja2 templates directory (default: ./templates)"
+    ),
+    schemas: list[str] | None = typer.Option(
+        None, "--schema", help="Schema to extract (repeatable; default: public)"
+    ),
+    log_level: LogLevel = typer.Option(LogLevel.INFO, "--log-level", help="Logging verbosity"),
+    json_logs: bool = typer.Option(False, "--json-logs", help="Emit structured JSON logs"),
+) -> None:
+    """Extract a PostgreSQL schema inventory (SQL + JSON + docs)."""
+    configure_logging(log_level.value, json_format=json_logs)
 
     config = resolve_config(
-        host=args.host,
-        port=args.port,
-        database=args.database,
-        user=args.user,
-        password=args.password,
-        output_dir=args.output_dir,
-        templates_dir=args.templates_dir,
-        schemas=args.schemas,
-        log_level=args.log_level,
+        host=host,
+        port=port,
+        database=database,
+        user=user,
+        password=password,
+        output_dir=output_dir,
+        templates_dir=templates_dir,
+        schemas=schemas,
+        log_level=log_level.value,
     )
 
     try:
         report = run(config)
     except Exception as exc:  # noqa: BLE001 - top-level guard
-        log.error("sql-dump failed: %s", exc)
+        log.error("sql-dump index failed: %s", exc)
         log.debug("Traceback:", exc_info=True)
-        return 1
+        raise typer.Exit(1) from exc
 
     # A run that produced errors still writes a report, but signals non-zero.
-    return 2 if report.errors else 0
+    raise typer.Exit(2 if report.errors else 0)
+
+
+@app.command()
+def analyze(
+    input_dir: str | None = typer.Option(
+        None, "--input", help="JSON inventory directory to analyze offline (no DB)"
+    ),
+    host: str = typer.Option("localhost", "--host", help="Database host"),
+    port: int = typer.Option(5432, "--port", help="Database port"),
+    database: str | None = typer.Option(
+        None, "--database", help="Database to connect to for online profiling"
+    ),
+    user: str = typer.Option("postgres", "--user", help="Database user"),
+    password: str | None = typer.Option(
+        None, "--password", help="Database password (falls back to PGPASSWORD)"
+    ),
+    schemas: list[str] | None = typer.Option(
+        None, "--schema", help="Schema to analyze (repeatable; default: public)"
+    ),
+    output: str = typer.Option("./analysis", "--output", help="Output directory"),
+    templates_dir: str = typer.Option(
+        "./templates", "--templates-dir", help="Jinja2 templates directory"
+    ),
+    config_path: str | None = typer.Option(
+        None, "--config", help="Analysis configuration YAML (enabled_checks, thresholds)"
+    ),
+    sample_size: int | None = typer.Option(
+        None, "--sample-size", help="Row cap for expensive per-column scans"
+    ),
+    statement_timeout: int = typer.Option(
+        0,
+        "--statement-timeout",
+        help="Per-query timeout in ms for online profiling (0 = none); "
+        "an overrun is logged and skipped",
+    ),
+    log_level: LogLevel = typer.Option(LogLevel.INFO, "--log-level", help="Logging verbosity"),
+    json_logs: bool = typer.Option(False, "--json-logs", help="Emit structured JSON logs"),
+) -> None:
+    """Analyze a database's shape: structure offline, statistics online."""
+    configure_logging(log_level.value, json_format=json_logs)
+    report = Report()
+
+    try:
+        analysis = run_analysis(
+            report=report,
+            input_dir=input_dir,
+            host=host,
+            port=port,
+            database=database,
+            user=user,
+            password=password,
+            schemas=schemas,
+            output=output,
+            templates_dir=templates_dir,
+            config_path=config_path,
+            sample_size=sample_size,
+            statement_timeout=statement_timeout,
+        )
+    except AnalysisInputError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001 - top-level guard
+        log.error("sql-dump analyze failed: %s", exc)
+        log.debug("Traceback:", exc_info=True)
+        raise typer.Exit(1) from exc
+
+    report.finish()
+    report.write(Path(output) / "run-report.json")
+    log.info(
+        "Analysis complete (%s mode): %d tables, %d warnings (%d critical)",
+        analysis.mode,
+        len(analysis.tables),
+        len(analysis.warnings),
+        analysis.summary.get("critical_count", 0),
+    )
+    raise typer.Exit(2 if report.errors else 0)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """Entry point for the ``sql-dump`` console script."""
+    app(args=argv)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

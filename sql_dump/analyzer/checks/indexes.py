@@ -7,10 +7,10 @@ only produces findings online.
 
 from __future__ import annotations
 
-from ...models import Inventory
-from ..models import INFO, WARNING, CheckResult
-from ..queries import quote_literal
-from ..rules import AnalysisContext, DatabaseCheck, constraint_columns, register
+from sql_dump.analyzer.models import INFO, WARNING, CheckResult
+from sql_dump.analyzer.queries import quote_literal
+from sql_dump.analyzer.rules import AnalysisContext, DatabaseCheck, constraint_columns, register
+from sql_dump.models import Inventory
 
 
 def _index_signature(columns: list[str], is_unique: bool) -> tuple[str, ...]:

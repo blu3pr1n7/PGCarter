@@ -6,7 +6,7 @@ writer layer wraps these with :func:`sql_dump.sql.base.with_header`.
 
 from __future__ import annotations
 
-from ..models import (
+from sql_dump.models import (
     Column,
     DatabaseInfo,
     Extension,
@@ -20,7 +20,7 @@ from ..models import (
     Trigger,
     View,
 )
-from .base import qualified, quote_ident
+from sql_dump.sql.base import qualified, quote_ident
 
 _CONSTRAINT_ORDER = {"PRIMARY KEY": 0, "UNIQUE": 1, "FOREIGN KEY": 2, "CHECK": 3, "EXCLUDE": 4}
 

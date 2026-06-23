@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-from ..models import Column
+from sql_dump.models import Column
 
 # --- data-type families -----------------------------------------------------
 # format_type() output is matched case-insensitively on a leading token.

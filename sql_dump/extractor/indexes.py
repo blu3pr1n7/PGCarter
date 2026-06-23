@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from ..models import Index
-from .base import Extractor
+from sql_dump.extractor.base import Extractor
+from sql_dump.models import Index
 
 _QUERY = """
 SELECT

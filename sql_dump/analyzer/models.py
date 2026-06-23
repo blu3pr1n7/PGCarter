@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..models import _Serialisable
+from sql_dump.models import _Serialisable
 
 # Severity levels, ordered least → most urgent.
 INFO = "info"

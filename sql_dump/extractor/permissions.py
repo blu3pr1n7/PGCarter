@@ -7,8 +7,8 @@ single uniform :class:`~sql_dump.models.Grant` shape.
 
 from __future__ import annotations
 
-from ..models import Grant
-from .base import Extractor
+from sql_dump.extractor.base import Extractor
+from sql_dump.models import Grant
 
 _GRANTEE = "CASE WHEN acl.grantee = 0 THEN 'PUBLIC' " \
            "ELSE pg_catalog.pg_get_userbyid(acl.grantee) END"

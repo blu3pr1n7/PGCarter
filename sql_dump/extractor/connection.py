@@ -9,8 +9,8 @@ from typing import Any
 import psycopg
 from psycopg.rows import dict_row
 
-from ..config import Config
-from ..logging_config import get_logger
+from sql_dump.config import Config
+from sql_dump.logging_config import get_logger
 
 log = get_logger(__name__)
 
@@ -44,6 +44,11 @@ class Database:
         with self._conn.cursor(row_factory=dict_row) as cur:
             cur.execute(sql, params)
             return list(cur.fetchall())
+
+    def execute(self, sql: str, params: Params = None) -> None:
+        """Run a statement that returns no rows (e.g. ``SET``)."""
+        with self._conn.cursor() as cur:
+            cur.execute(sql, params)
 
     def query_one(self, sql: str, params: Params = None) -> dict[str, Any] | None:
         rows = self.query(sql, params)

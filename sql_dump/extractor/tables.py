@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from collections import defaultdict
 
-from ..models import Column, Constraint, Table
-from .base import Extractor
+from sql_dump.extractor.base import Extractor
+from sql_dump.models import Column, Constraint, Table
 
 _TABLES = """
 SELECT

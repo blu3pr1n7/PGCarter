@@ -13,7 +13,7 @@ from dataclasses import fields
 from pathlib import Path
 from typing import Any
 
-from ..models import (
+from sql_dump.models import (
     Column,
     Constraint,
     DatabaseInfo,

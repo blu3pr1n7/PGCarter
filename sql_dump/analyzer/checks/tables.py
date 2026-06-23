@@ -9,11 +9,11 @@ findings even offline.
 
 from __future__ import annotations
 
-from ...models import Table
-from .. import heuristics
-from ..models import INFO, WARNING, CheckResult
-from ..queries import freshness_sql
-from ..rules import AnalysisContext, TableCheck, register
+from sql_dump.analyzer import heuristics
+from sql_dump.analyzer.models import INFO, WARNING, CheckResult
+from sql_dump.analyzer.queries import freshness_sql
+from sql_dump.analyzer.rules import AnalysisContext, TableCheck, register
+from sql_dump.models import Table
 
 # Column names whose min/max bound a table's time span.
 _GROWTH_NAMES = ("created_at", "created", "inserted_at", "modified_at", "updated_at")

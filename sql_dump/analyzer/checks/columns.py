@@ -11,17 +11,17 @@ from __future__ import annotations
 
 from typing import Any
 
-from ...models import Column, Table
-from .. import heuristics
-from ..models import CRITICAL, INFO, WARNING, CheckResult
-from ..queries import (
+from sql_dump.analyzer import heuristics
+from sql_dump.analyzer.models import CRITICAL, INFO, WARNING, CheckResult
+from sql_dump.analyzer.queries import (
     distribution_sql,
     freshness_sql,
     null_and_cardinality_sql,
     string_profile_sql,
     value_distribution_sql,
 )
-from ..rules import AnalysisContext, ColumnCheck, constraint_columns, register
+from sql_dump.analyzer.rules import AnalysisContext, ColumnCheck, constraint_columns, register
+from sql_dump.models import Column, Table
 
 ColumnAsset = tuple[Table, Column]
 

@@ -8,10 +8,10 @@ databases.
 
 from __future__ import annotations
 
-from ...models import Table
-from ..models import INFO, WARNING, CheckResult
-from ..queries import assert_safe, quote_literal, render_template
-from ..rules import AnalysisContext, TableCheck, register
+from sql_dump.analyzer.models import INFO, WARNING, CheckResult
+from sql_dump.analyzer.queries import assert_safe, quote_literal, render_template
+from sql_dump.analyzer.rules import AnalysisContext, TableCheck, register
+from sql_dump.models import Table
 
 
 def _table_stats_sql(table: Table) -> str:

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from ..models import Extension
-from .base import Extractor
+from sql_dump.extractor.base import Extractor
+from sql_dump.models import Extension
 
 _QUERY = """
 SELECT

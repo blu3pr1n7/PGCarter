@@ -17,9 +17,9 @@ from typing import Any
 
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound, select_autoescape
 
-from ..logging_config import get_logger
-from ..report import Report
-from .models import AnalysisReport, TableAnalysis
+from sql_dump.analyzer.models import AnalysisReport, TableAnalysis
+from sql_dump.logging_config import get_logger
+from sql_dump.report import Report
 
 log = get_logger("sql_dump.analyzer.writer")
 
