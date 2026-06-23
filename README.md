@@ -5,6 +5,20 @@ documentation generation, and database-shape analysis** tool. `sql-dump` is
 both a schema extraction tool and a lightweight database discovery and
 profiling platform.
 
+📖 **Full documentation: <https://blu3pr1n7.github.io/sql-dump/>**
+
+## Quick start
+
+```bash
+pip install -e .
+
+# 1. Extract a schema inventory (SQL + JSON + docs)
+sql-dump index --database mydb --output-dir ./inventory
+
+# 2. Profile it offline (no database needed)
+sql-dump analyze --input ./inventory/json --output ./analysis
+```
+
 `sql-dump` connects to a PostgreSQL database and produces three independent
 outputs:
 
@@ -407,6 +421,29 @@ structlog.contextvars.bind_contextvars(service="sql-dump", request_id="abc123")
 
 > Never log secrets, tokens, or sensitive row data — logging stays advisory and
 > metadata-only, like the rest of the tool.
+
+## Documentation site
+
+The project documentation (this README's content plus installation, usage, CLI,
+architecture, and API reference) is published with **MkDocs Material** to GitHub
+Pages: <https://blu3pr1n7.github.io/sql-dump/>.
+
+Build or preview it locally:
+
+```bash
+pip install -e ".[docs]"
+make docs-serve     # live preview at http://127.0.0.1:8000
+make docs-build     # strict build (fails on warnings/broken links)
+```
+
+The `.github/workflows/docs.yml` workflow builds the site with
+`mkdocs build --strict` and deploys it on every push to `master`.
+
+> **One-time manual step:** GitHub Pages must be set to publish from GitHub
+> Actions before the first deploy. In the repository, go to
+> **Settings → Pages → Build and deployment** and set **Source** to
+> **“GitHub Actions”**. (This cannot be enabled from the workflow itself; it is
+> a repository setting.) Once set, the `docs` workflow publishes automatically.
 
 ## Development
 

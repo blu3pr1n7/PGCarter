@@ -1,0 +1,71 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # A disposable PostgreSQL for the integration suite, mirroring
+    # docker-compose.yml (the host port differs; the workflow talks to 5432).
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: sqldump
+          POSTGRES_PASSWORD: sqldump
+          POSTGRES_DB: sqldump_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sqldump -d sqldump_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint (ruff)
+        run: ruff check sql_dump tests
+
+      - name: Type check (mypy)
+        run: mypy sql_dump
+
+      - name: Unit tests
+        run: pytest -m "not integration"
+
+      - name: Seed integration database
+        run: psql "$SQLDUMP_TEST_DSN" -f tests/fixtures/seed.sql
+        env:
+          PGPASSWORD: sqldump
+          SQLDUMP_TEST_DSN: postgresql://sqldump@localhost:5432/sqldump_test
+
+      - name: Integration tests
+        run: pytest -m integration
+        env:
+          SQLDUMP_TEST_HOST: localhost
+          SQLDUMP_TEST_PORT: "5432"
+          SQLDUMP_TEST_DB: sqldump_test
+          SQLDUMP_TEST_USER: sqldump
+          SQLDUMP_TEST_PASSWORD: sqldump

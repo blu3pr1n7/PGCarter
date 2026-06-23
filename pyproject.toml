@@ -22,6 +22,10 @@ dev = [
     "mypy>=1.10",
     "ruff>=0.5",
 ]
+docs = [
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.25",
+]
 
 [project.scripts]
 sql-dump = "sql_dump.cli:main"

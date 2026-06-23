@@ -9,6 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
+# MkDocs build output
+site/
+
 dumps/
 .idea/*
 prompt/*

@@ -1,0 +1,66 @@
+name: docs
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "sql_dump/**"
+      - "README.md"
+      - "pyproject.toml"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch:
+
+# Allow only one concurrent deployment, skipping runs queued between the run
+# in-progress and latest queued. Do not cancel in-progress runs.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Installs the package (so mkdocstrings can import sql_dump) plus the
+          # docs toolchain (mkdocs-material, mkdocstrings[python]).
+          pip install -e ".[docs]"
+
+      - name: Build documentation (strict)
+        # --strict fails the build on broken links, missing anchors, omitted nav
+        # files, or any MkDocs warning.
+        run: mkdocs build --strict
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

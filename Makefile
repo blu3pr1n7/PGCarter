@@ -1,6 +1,6 @@
 .PHONY: help install dev lint format typecheck test test-unit test-integration \
         test-all coverage clean run analyze db-up db-down db-logs db-psql e2e \
-        e2e-analyze
+        e2e-analyze docs docs-serve docs-build
 
 PYTHON ?= .venv/bin/python
 UV ?= uv
@@ -85,6 +85,17 @@ e2e-analyze: db-up  ## Run an online analysis against the test DB into ./build/a
 		--output build/analysis --templates-dir ./templates --sample-size 10000
 	@echo "Generated analysis under build/analysis"
 
+# --- Documentation site -----------------------------------------------------
+
+docs:  ## Install the documentation toolchain
+	$(UV) pip install -e ".[docs]"
+
+docs-serve:  ## Live-reload docs preview at http://127.0.0.1:8000
+	$(PYTHON) -m mkdocs serve
+
+docs-build:  ## Build the docs site (strict: fails on warnings/broken links)
+	$(PYTHON) -m mkdocs build --strict
+
 clean:  ## Remove caches and build artifacts
-	rm -rf build dist *.egg-info .pytest_cache .mypy_cache .ruff_cache
+	rm -rf build dist *.egg-info .pytest_cache .mypy_cache .ruff_cache site
 	find . -type d -name __pycache__ -prune -exec rm -rf {} +
