@@ -79,8 +79,10 @@ sql-dump index \
 | `--output-dir` | _the database name_ | created if missing; must be writable |
 | `--templates-dir` | `./templates` | must exist for docs to be generated |
 | `--schema` | `public` | repeatable; architecture supports multiple schemas |
-| `--log-level` | `INFO` | `DEBUG`/`INFO`/`WARNING`/`ERROR` |
-| `--json-logs` | off | emit structured JSON logs |
+| `--log-level` | `INFO` | `DEBUG`/`INFO`/`WARNING`/`ERROR` (or `LOG_LEVEL`) |
+| `--pretty` / `--no-pretty` | JSON | colourised console logs for local dev (or `LOG_PRETTY`) |
+
+The same `--log-level` / `--pretty` options apply to every subcommand.
 
 The connection never writes: it issues `SET default_transaction_read_only = on`.
 
@@ -345,6 +347,66 @@ templates/
 ├── column_analysis.md.j2   # per-column fragment (included by table_analysis)
 └── warnings.md.j2          # warnings list
 ```
+
+## Logging
+
+Logging is built on [`structlog`](https://www.structlog.org/). The default is
+**structured JSON on stdout**, ready for log aggregators (Datadog, ELK/
+OpenSearch, CloudWatch, Loki, …):
+
+```json
+{"event": "database_connecting", "host": "localhost", "database": "mydb",
+ "level": "info", "logger": "sql_dump.extractor.connection",
+ "timestamp": "2026-06-23T10:30:00.123456Z"}
+```
+
+For local development, enable colourised console output:
+
+```bash
+sql-dump index --database mydb --pretty
+# or, for any process:
+LOG_PRETTY=true LOG_LEVEL=DEBUG sql-dump analyze --input ./inventory/json
+```
+
+```
+2026-06-23T10:30:00Z [info] database_connecting host=localhost database=mydb
+```
+
+Configuration:
+
+| Source | Production (default) | Local dev |
+| --- | --- | --- |
+| CLI flag | `--no-pretty` | `--pretty` |
+| Env var | `LOG_PRETTY=false` | `LOG_PRETTY=true` |
+| Level | `--log-level` / `LOG_LEVEL` (default `INFO`) | |
+
+### Using it in code
+
+Setup happens once, in `sql_dump/logging_config.py`:
+
+```python
+from sql_dump.logging_config import configure_logging, get_logger
+
+configure_logging(pretty_logs=False, level="INFO")  # JSON to stdout
+log = get_logger(__name__)
+log.info("user_created", user_id=123, plan="enterprise")   # structured
+log.exception("payment_failed", payment_id=123)            # structured traceback
+```
+
+Both **stdlib** `logging.getLogger(...)` and **structlog** `get_logger(...)`
+render through the same pipeline, so existing `log.info("Extracting %s", x)`
+calls keep working alongside structured events.
+
+Attach request/job correlation (or any global metadata) with contextvars — it is
+added to every subsequent event automatically:
+
+```python
+import structlog
+structlog.contextvars.bind_contextvars(service="sql-dump", request_id="abc123")
+```
+
+> Never log secrets, tokens, or sensitive row data — logging stays advisory and
+> metadata-only, like the rest of the tool.
 
 ## Development
 

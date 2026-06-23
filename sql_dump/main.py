@@ -61,10 +61,10 @@ def run(config: Config) -> Report:
     report.finish()
     report.write(config.report_path)
     log.info(
-        "Done: %s objects extracted, %s files written, %s warnings, %s errors",
-        sum(report.extracted.values()),
-        len(report.generated_files),
-        len(report.warnings),
-        len(report.errors),
+        "extraction_complete",
+        objects_extracted=sum(report.extracted.values()),
+        files_written=len(report.generated_files),
+        warnings=len(report.warnings),
+        errors=len(report.errors),
     )
     return report

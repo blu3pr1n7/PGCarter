@@ -11,6 +11,7 @@ Exit codes (per subcommand): ``0`` success, ``2`` completed with recorded
 errors, ``1`` fatal error.
 """
 
+import os
 from enum import StrEnum
 from pathlib import Path
 
@@ -18,7 +19,7 @@ import typer
 
 from sql_dump.analyzer.runner import AnalysisInputError, run_analysis
 from sql_dump.config import resolve_config
-from sql_dump.logging_config import configure_logging, get_logger
+from sql_dump.logging_config import _env_bool, configure_logging, get_logger
 from sql_dump.main import run
 from sql_dump.report import Report
 
@@ -30,6 +31,19 @@ class LogLevel(StrEnum):
     INFO = "INFO"
     WARNING = "WARNING"
     ERROR = "ERROR"
+
+
+def _default_level() -> LogLevel:
+    """CLI default log level, honouring the LOG_LEVEL environment variable."""
+    try:
+        return LogLevel(os.environ.get("LOG_LEVEL", "INFO").upper())
+    except ValueError:
+        return LogLevel.INFO
+
+
+# Env-driven CLI defaults (a flag still overrides them).
+_DEFAULT_LEVEL = _default_level()
+_DEFAULT_PRETTY = _env_bool("LOG_PRETTY", False)
 
 
 app = typer.Typer(
@@ -61,11 +75,15 @@ def index(
     schemas: list[str] | None = typer.Option(
         None, "--schema", help="Schema to extract (repeatable; default: public)"
     ),
-    log_level: LogLevel = typer.Option(LogLevel.INFO, "--log-level", help="Logging verbosity"),
-    json_logs: bool = typer.Option(False, "--json-logs", help="Emit structured JSON logs"),
+    log_level: LogLevel = typer.Option(_DEFAULT_LEVEL, "--log-level", help="Logging verbosity"),
+    pretty: bool = typer.Option(
+        _DEFAULT_PRETTY,
+        "--pretty/--no-pretty",
+        help="Colourised developer console logs (default: JSON; or set LOG_PRETTY)",
+    ),
 ) -> None:
     """Extract a PostgreSQL schema inventory (SQL + JSON + docs)."""
-    configure_logging(log_level.value, json_format=json_logs)
+    configure_logging(pretty_logs=pretty, level=log_level.value)
 
     config = resolve_config(
         host=host,
@@ -123,11 +141,15 @@ def analyze(
         help="Per-query timeout in ms for online profiling (0 = none); "
         "an overrun is logged and skipped",
     ),
-    log_level: LogLevel = typer.Option(LogLevel.INFO, "--log-level", help="Logging verbosity"),
-    json_logs: bool = typer.Option(False, "--json-logs", help="Emit structured JSON logs"),
+    log_level: LogLevel = typer.Option(_DEFAULT_LEVEL, "--log-level", help="Logging verbosity"),
+    pretty: bool = typer.Option(
+        _DEFAULT_PRETTY,
+        "--pretty/--no-pretty",
+        help="Colourised developer console logs (default: JSON; or set LOG_PRETTY)",
+    ),
 ) -> None:
     """Analyze a database's shape: structure offline, statistics online."""
-    configure_logging(log_level.value, json_format=json_logs)
+    configure_logging(pretty_logs=pretty, level=log_level.value)
     report = Report()
 
     try:

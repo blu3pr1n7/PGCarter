@@ -1,61 +1,114 @@
-"""Structured l# Connection details for the dockerised test database (see docker-compose.yml).
-export SQLDUMP_TEST_HOST ?= localhost
-export SQLDUMP_TEST_PORT ?= 55432
-export SQLDUMP_TEST_DB   ?= sqldump_test
-export SQLDUMP_TEST_USER ?= sqldump
-export SQLDUMP_TEST_PASSWORD ?= sqldumpogging configuration for sql-dump."""
+"""Structured logging configuration for sql-dump, built on ``structlog``.
+
+Production default: line-delimited **JSON to stdout**, ready for ingestion by log
+aggregators (Datadog, ELK/OpenSearch, CloudWatch, Loki, …). Enable colourised
+developer console output with ``pretty_logs=True`` or ``LOG_PRETTY=true``.
+
+Both stdlib ``logging.getLogger`` and ``structlog.get_logger`` are supported and
+render through the *same* pipeline, so existing ``%``-style calls keep working
+while new code can emit structured key/value events. Context bound via
+``structlog.contextvars.bind_contextvars`` (e.g. ``request_id``) is automatically
+attached to every event.
+"""
 
 from __future__ import annotations
 
-import json
 import logging
+import os
 import sys
-from datetime import UTC, datetime
+from typing import Any
+
+import structlog
+
+_TRUE = {"1", "true", "yes", "on"}
 
 
-class JsonFormatter(logging.Formatter):
-    """Emit log records as single-line JSON objects for structured logging."""
-
-    def format(self, record: logging.LogRecord) -> str:
-        payload = {
-            "timestamp": datetime.now(UTC).isoformat(),
-            "level": record.levelname,
-            "logger": record.name,
-            "message": record.getMessage(),
-        }
-        if record.exc_info:
-            payload["exception"] = self.formatException(record.exc_info)
-        # Include any structured extras attached to the record.
-        for key, value in record.__dict__.items():
-            if key in ("args", "msg", "levelname", "levelno", "pathname", "filename",
-                       "module", "exc_info", "exc_text", "stack_info", "lineno",
-                       "funcName", "created", "msecs", "relativeCreated", "thread",
-                       "threadName", "processName", "process", "name", "taskName"):
-                continue
-            payload[key] = value
-        return json.dumps(payload, default=str)
+def _env_bool(name: str, default: bool = False) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in _TRUE
 
 
-def configure_logging(level: str = "INFO", *, json_format: bool = False) -> None:
-    """Configure the root logger for the application.
+def _shared_processors() -> list[Any]:
+    """Processors applied to *every* event, structlog- or stdlib-originated."""
+    return [
+        # Merge contextvars (service, environment, request_id, …) first.
+        structlog.contextvars.merge_contextvars,
+        structlog.processors.add_log_level,
+        structlog.stdlib.add_logger_name,
+        # Render %-style positional args from legacy ``log.info("x %s", y)`` calls.
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.TimeStamper(fmt="iso", utc=True, key="timestamp"),
+        structlog.processors.StackInfoRenderer(),
+    ]
+
+
+def configure_logging(
+    pretty_logs: bool | None = None,
+    level: str | None = None,
+) -> None:
+    """Configure structlog and stdlib logging for the whole application.
 
     Args:
-        level: Logging level name (e.g. ``"INFO"``, ``"DEBUG"``).
-        json_format: If True, emit structured JSON logs; otherwise human-readable.
+        pretty_logs: ``True`` → colourised developer console; ``False`` → JSON.
+            ``None`` (default) falls back to the ``LOG_PRETTY`` environment
+            variable, then to JSON.
+        level: Logging level name (``"DEBUG"``/``"INFO"``/…). ``None`` falls back
+            to the ``LOG_LEVEL`` environment variable, then to ``"INFO"``.
+
+    Logs are written to **stdout**. Calling this more than once reconfigures
+    cleanly (the root handler is replaced).
     """
-    handler = logging.StreamHandler(sys.stderr)
-    if json_format:
-        handler.setFormatter(JsonFormatter())
+    if pretty_logs is None:
+        pretty_logs = _env_bool("LOG_PRETTY", False)
+    if level is None:
+        level = os.environ.get("LOG_LEVEL", "INFO")
+    numeric_level = getattr(logging, str(level).upper(), logging.INFO)
+
+    shared = _shared_processors()
+
+    if pretty_logs:
+        # ConsoleRenderer renders exc_info itself (pretty, coloured tracebacks).
+        final_processors: list[Any] = [
+            structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+            structlog.dev.ConsoleRenderer(),
+        ]
     else:
-        handler.setFormatter(
-            logging.Formatter("%(asctime)s %(levelname)-7s %(name)s: %(message)s")
-        )
+        # JSON mode: serialise exceptions into a string ``exception`` field.
+        final_processors = [
+            structlog.stdlib.ProcessorFormatter.remove_processors_meta,
+            structlog.processors.format_exc_info,
+            structlog.processors.JSONRenderer(),
+        ]
+
+    # structlog-originated records run the shared chain then hand off to the
+    # stdlib ProcessorFormatter for final rendering.
+    structlog.configure(
+        processors=[*shared, structlog.stdlib.ProcessorFormatter.wrap_for_formatter],
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        wrapper_class=structlog.stdlib.BoundLogger,
+        cache_logger_on_first_use=True,
+    )
+
+    # The single handler renders BOTH structlog and plain-stdlib records.
+    formatter = structlog.stdlib.ProcessorFormatter(
+        foreign_pre_chain=shared,
+        processors=final_processors,
+    )
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(formatter)
 
     root = logging.getLogger()
     root.handlers.clear()
     root.addHandler(handler)
-    root.setLevel(getattr(logging, level.upper(), logging.INFO))
+    root.setLevel(numeric_level)
 
 
-def get_logger(name: str) -> logging.Logger:
-    return logging.getLogger(name)
+def get_logger(name: str | None = None) -> structlog.stdlib.BoundLogger:
+    """Return a structlog logger (stdlib-compatible).
+
+    Accepts ``%``-style positional args and ``.exception()`` like the stdlib
+    logger it replaces, while also accepting structured keyword fields.
+    """
+    return structlog.get_logger(name)

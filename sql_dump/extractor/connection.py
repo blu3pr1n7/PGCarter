@@ -27,8 +27,7 @@ class Database:
     @contextmanager
     def connect(cls, config: Config) -> Iterator[Database]:
         """Open a read-only connection for the lifetime of the context."""
-        log.info("Connecting to database", extra={"host": config.host,
-                                                   "database": config.database})
+        log.info("database_connecting", host=config.host, database=config.database)
         conn = psycopg.connect(config.conninfo, autocommit=True)
         try:
             # We never write; advertise that to the server.
@@ -37,7 +36,7 @@ class Database:
             yield cls(conn)
         finally:
             conn.close()
-            log.info("Connection closed")
+            log.info("database_connection_closed", database=config.database)
 
     def query(self, sql: str, params: Params = None) -> list[dict[str, Any]]:
         """Run a query returning a list of dict rows."""
