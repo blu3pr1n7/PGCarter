@@ -1,0 +1,34 @@
+# Example sql-dump analysis configuration.
+#
+#   sql-dump analyze --input ./inventory/json --config analysis.yml
+#
+# All keys are optional. Omitting `enabled_checks` runs every registered check;
+# omitting a threshold uses its documented default.
+analysis:
+  # Restrict the run to a subset of checks (by name). Remove this key to run all.
+  # Available check names:
+  #   table_size, row_count, growth_indicators, table_structure,
+  #   null_analysis, cardinality, distribution, string_profiling,
+  #   identifier_detection, timestamp_detection, email_detection,
+  #   status_columns, suspicious_columns,
+  #   duplicate_indexes, missing_fk_indexes, unused_indexes,
+  #   duplicate_primary_keys, duplicate_unique_values, unused_tables,
+  #   heavily_referenced, relationship_depth, orphan_relationships
+  enabled_checks:
+    - null_analysis
+    - cardinality
+    - table_size
+    - row_count
+    - missing_fk_indexes
+    - duplicate_indexes
+    - heavily_referenced
+
+  thresholds:
+    high_null_percentage: 80     # flag columns at/above this null %
+    low_cardinality_limit: 10    # distinct values at/below this -> "low cardinality"
+    large_table_rows: 10000000   # estimated rows at/above this -> "extremely large"
+    unique_ratio: 0.99           # distinct/total at/above this -> "identifier"
+    long_text_length: 10000      # avg text length above this -> "wide text column"
+
+  # Default row cap for expensive per-column scans (CLI --sample-size overrides).
+  # sample_size: 10000

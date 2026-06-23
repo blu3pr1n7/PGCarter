@@ -1,0 +1,14 @@
+[
+  {
+    "severity": "warning",
+    "category": "quality",
+    "check": "unused_tables",
+    "message": "Table participates in no foreign-key relationships",
+    "table": "public.audit_log",
+    "column": null,
+    "details": {
+      "inbound_fks": 0,
+      "outbound_fks": 0
+    }
+  }
+]

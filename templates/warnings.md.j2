@@ -1,0 +1,15 @@
+# Analysis Warnings
+
+Generated: {{ generated_at }}
+
+{% if not warnings %}
+No warnings were raised.
+{% else %}
+{{ warnings | length }} warning(s).
+
+| Severity | Check | Category | Table | Column | Message |
+| --- | --- | --- | --- | --- | --- |
+{% for w in warnings %}
+| {{ w.severity | upper }} | {{ w.check }} | {{ w.category }} | `{{ w.table or "" }}` | {{ ("`" ~ w.column ~ "`") if w.column else "" }} | {{ w.message }} |
+{% endfor %}
+{% endif %}

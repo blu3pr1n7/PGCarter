@@ -1,5 +1,6 @@
 .PHONY: help install dev lint format typecheck test test-unit test-integration \
-        test-all coverage clean run db-up db-down db-logs db-psql e2e
+        test-all coverage clean run analyze db-up db-down db-logs db-psql e2e \
+        e2e-analyze
 
 PYTHON ?= .venv/bin/python
 UV ?= uv
@@ -49,6 +50,9 @@ coverage:  ## Run tests with coverage report
 run:  ## Run sql-dump (pass ARGS="--database mydb ...")
 	$(PYTHON) -m sql_dump.cli $(ARGS)
 
+analyze:  ## Run sql-dump analyze (pass ARGS="--input ./json ..." or "--database ...")
+	$(PYTHON) -m sql_dump.cli analyze $(ARGS)
+
 # --- Dockerised test database ----------------------------------------------
 
 db-up:  ## Start the test PostgreSQL and wait until healthy
@@ -71,6 +75,15 @@ e2e: db-up  ## Run the CLI end-to-end against the test DB into ./build/e2e
 		--password $(SQLDUMP_TEST_PASSWORD) \
 		--output-dir build/e2e --templates-dir ./templates
 	@echo "Generated inventory under build/e2e"
+
+e2e-analyze: db-up  ## Run an online analysis against the test DB into ./build/analysis
+	rm -rf build/analysis
+	$(PYTHON) -m sql_dump.cli analyze \
+		--host $(SQLDUMP_TEST_HOST) --port $(SQLDUMP_TEST_PORT) \
+		--database $(SQLDUMP_TEST_DB) --user $(SQLDUMP_TEST_USER) \
+		--password $(SQLDUMP_TEST_PASSWORD) \
+		--output build/analysis --templates-dir ./templates --sample-size 10000
+	@echo "Generated analysis under build/analysis"
 
 clean:  ## Remove caches and build artifacts
 	rm -rf build dist *.egg-info .pytest_cache .mypy_cache .ruff_cache

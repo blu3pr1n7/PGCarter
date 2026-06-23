@@ -1,0 +1,10 @@
+{#- Inline column-stats fragment, included per-row from table_analysis.md.j2.
+    Renders a compact one-line summary of the column's profiling stats. The
+    loop variable `c` (a column analysis dict) is provided by the includer. -#}
+{%- set bits = [] -%}
+{%- if c.stats.null_percentage is defined %}{% set _ = bits.append("null " ~ c.stats.null_percentage ~ "%") %}{% endif -%}
+{%- if c.stats.distinct_values is defined %}{% set _ = bits.append(c.stats.distinct_values ~ " distinct") %}{% endif -%}
+{%- if c.stats.min is defined and c.stats.min is not none %}{% set _ = bits.append("min " ~ c.stats.min) %}{% endif -%}
+{%- if c.stats.max is defined and c.stats.max is not none %}{% set _ = bits.append("max " ~ c.stats.max) %}{% endif -%}
+{%- if c.stats.avg_length is defined and c.stats.avg_length is not none %}{% set _ = bits.append("avg len " ~ c.stats.avg_length | round(1)) %}{% endif -%}
+{{- bits | join(", ") -}}

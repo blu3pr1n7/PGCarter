@@ -19,8 +19,11 @@ from pathlib import Path
 
 import pytest
 
+from sql_dump.analyzer import AnalysisEngine, load_analysis_config
 from sql_dump.config import resolve_config
+from sql_dump.extractor import Database, InventoryExtractor
 from sql_dump.main import run
+from sql_dump.report import Report
 
 pytestmark = pytest.mark.integration
 
@@ -78,3 +81,43 @@ def test_no_data_exported(tmp_path):
     tables_glob = config.sql_dir / "schemas"
     for table_file in tables_glob.rglob("tables/*.sql"):
         assert "INSERT INTO" not in table_file.read_text().upper()
+
+
+def test_online_analysis_against_live_db(tmp_path):
+    """Online analysis enriches structure with real profiling statistics."""
+    config = _config(tmp_path)
+    report = Report()
+    analysis_cfg = load_analysis_config(None, sample_size=10000)
+
+    with Database.connect(config) as db:
+        inventory = InventoryExtractor(db, config.schemas, report).extract()
+        analysis = AnalysisEngine(inventory, analysis_cfg, db=db, report=report).analyze()
+
+    assert analysis.mode == "online"
+    assert analysis.tables, "expected at least one analysed table"
+
+    # At least one table should have measured size/row metrics from the DB.
+    assert any("estimated_rows" in t.metrics for t in analysis.tables)
+    # At least one column should carry executed profiling stats.
+    assert any(
+        c.stats for t in analysis.tables for c in t.columns
+    ), "expected profiling statistics on some column"
+
+
+def test_offline_analysis_from_inventory_json(tmp_path):
+    """Running the extractor then analysing its JSON output works offline."""
+    from sql_dump.analyzer import load_inventory
+
+    config = _config(tmp_path)
+    run(config)  # produces <output>/json/*.json
+
+    inventory = load_inventory(config.output_dir)
+    engine = AnalysisEngine(inventory, load_analysis_config(None))
+    analysis = engine.analyze()
+    assert analysis.mode == "offline"
+    assert analysis.database == config.database
+    # Every query the offline run generated is read-only.
+    from sql_dump.analyzer.queries import assert_safe
+
+    for sql in engine.ctx.generated_queries:
+        assert_safe(sql)

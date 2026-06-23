@@ -1,0 +1,225 @@
+{
+  "schema": "public",
+  "name": "org",
+  "metrics": {
+    "growth_column": "created_at",
+    "column_count": 3
+  },
+  "checks": [
+    {
+      "check": "table_size",
+      "category": "statistics",
+      "severity": "info",
+      "message": "Size metrics require online mode",
+      "table": "public.org",
+      "column": null,
+      "details": {},
+      "query": "-- table_stats.sql\n-- Size metrics and the planner's estimated row count for a single relation.\n-- Read-only. Placeholders are substituted with quoted string literals\n-- (schema name, table name, and qualified name passed to the pg_*_size calls).\nSELECT\n    pg_total_relation_size('public.org')                 AS total_bytes,\n    pg_table_size('public.org')                          AS table_bytes,\n    pg_indexes_size('public.org')                        AS index_bytes,\n    pg_size_pretty(pg_total_relation_size('public.org')) AS total_pretty,\n    pg_size_pretty(pg_table_size('public.org'))          AS table_pretty,\n    pg_size_pretty(pg_indexes_size('public.org'))        AS index_pretty,\n    c.reltuples::bigint                                        AS estimated_rows\nFROM pg_catalog.pg_class c\nJOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\nWHERE n.nspname = 'public'\n  AND c.relname = 'org'\n",
+      "executed": false
+    },
+    {
+      "check": "row_count",
+      "category": "statistics",
+      "severity": "info",
+      "message": "Row count estimate requires online mode",
+      "table": "public.org",
+      "column": null,
+      "details": {},
+      "query": "-- table_stats.sql\n-- Size metrics and the planner's estimated row count for a single relation.\n-- Read-only. Placeholders are substituted with quoted string literals\n-- (schema name, table name, and qualified name passed to the pg_*_size calls).\nSELECT\n    pg_total_relation_size('public.org')                 AS total_bytes,\n    pg_table_size('public.org')                          AS table_bytes,\n    pg_indexes_size('public.org')                        AS index_bytes,\n    pg_size_pretty(pg_total_relation_size('public.org')) AS total_pretty,\n    pg_size_pretty(pg_table_size('public.org'))          AS table_pretty,\n    pg_size_pretty(pg_indexes_size('public.org'))        AS index_pretty,\n    c.reltuples::bigint                                        AS estimated_rows\nFROM pg_catalog.pg_class c\nJOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\nWHERE n.nspname = 'public'\n  AND c.relname = 'org'\n",
+      "executed": false
+    },
+    {
+      "check": "growth_indicators",
+      "category": "table",
+      "severity": "info",
+      "message": "Growth window available via 'created_at' (online)",
+      "table": "public.org",
+      "column": "created_at",
+      "details": {
+        "growth_column": "created_at"
+      },
+      "query": "SELECT\n    min(created_at) AS earliest,\n    max(created_at) AS latest\nFROM public.org",
+      "executed": false
+    },
+    {
+      "check": "table_structure",
+      "category": "table",
+      "severity": "info",
+      "message": "3 columns",
+      "table": "public.org",
+      "column": null,
+      "details": {
+        "column_count": 3
+      },
+      "query": null,
+      "executed": false
+    },
+    {
+      "check": "duplicate_primary_keys",
+      "category": "quality",
+      "severity": "info",
+      "message": "Duplicate check for 'org_pkey' available online",
+      "table": "public.org",
+      "column": "id",
+      "details": {
+        "constraint": "org_pkey"
+      },
+      "query": "SELECT count(*) AS duplicate_groups, coalesce(sum(c) - count(*), 0) AS extra_rows\nFROM (\n    SELECT id, count(*) AS c\n    FROM public.org\n    WHERE id IS NOT NULL\n    GROUP BY id\n    HAVING count(*) > 1\n) d",
+      "executed": false
+    },
+    {
+      "check": "duplicate_unique_values",
+      "category": "quality",
+      "severity": "info",
+      "message": "Duplicate check for 'org_name_key' available online",
+      "table": "public.org",
+      "column": "name",
+      "details": {
+        "constraint": "org_name_key"
+      },
+      "query": "SELECT count(*) AS duplicate_groups, coalesce(sum(c) - count(*), 0) AS extra_rows\nFROM (\n    SELECT name, count(*) AS c\n    FROM public.org\n    WHERE name IS NOT NULL\n    GROUP BY name\n    HAVING count(*) > 1\n) d",
+      "executed": false
+    },
+    {
+      "check": "heavily_referenced",
+      "category": "relationship",
+      "severity": "info",
+      "message": "Referenced by 1 foreign key(s)",
+      "table": "public.org",
+      "column": null,
+      "details": {
+        "referenced_by": 1
+      },
+      "query": null,
+      "executed": false
+    }
+  ],
+  "columns": [
+    {
+      "name": "id",
+      "data_type": "bigint",
+      "nullable": false,
+      "semantics": [
+        "identifier"
+      ],
+      "stats": {
+        "indexed": true
+      },
+      "checks": [
+        {
+          "check": "cardinality",
+          "category": "column",
+          "severity": "info",
+          "message": "Cardinality available online",
+          "table": "public.org",
+          "column": "id",
+          "details": {},
+          "query": "-- column_stats.sql\n-- Per-column null and cardinality profile. Read-only.\n-- The column placeholder is a quoted identifier; the relation placeholder is a\n-- FROM-clause expression (optionally a LIMIT sample subquery).\nSELECT\n    count(*)                                  AS total_rows,\n    count(*) FILTER (WHERE id IS NULL)  AS null_rows,\n    count(DISTINCT id)                  AS distinct_values\nFROM public.org\n",
+          "executed": false
+        },
+        {
+          "check": "distribution",
+          "category": "column",
+          "severity": "info",
+          "message": "Distribution available online",
+          "table": "public.org",
+          "column": "id",
+          "details": {},
+          "query": "SELECT\n    min(id) AS min_value,\n    max(id) AS max_value,\n    avg(id::double precision) AS avg_value\nFROM public.org",
+          "executed": false
+        },
+        {
+          "check": "identifier_detection",
+          "category": "heuristic",
+          "severity": "info",
+          "message": "Identifier-like column",
+          "table": "public.org",
+          "column": "id",
+          "details": {
+            "semantic": "identifier",
+            "indexed": true
+          },
+          "query": null,
+          "executed": false
+        }
+      ]
+    },
+    {
+      "name": "name",
+      "data_type": "text",
+      "nullable": false,
+      "semantics": [],
+      "stats": {},
+      "checks": [
+        {
+          "check": "cardinality",
+          "category": "column",
+          "severity": "info",
+          "message": "Cardinality available online",
+          "table": "public.org",
+          "column": "name",
+          "details": {},
+          "query": "-- column_stats.sql\n-- Per-column null and cardinality profile. Read-only.\n-- The column placeholder is a quoted identifier; the relation placeholder is a\n-- FROM-clause expression (optionally a LIMIT sample subquery).\nSELECT\n    count(*)                                  AS total_rows,\n    count(*) FILTER (WHERE name IS NULL)  AS null_rows,\n    count(DISTINCT name)                  AS distinct_values\nFROM public.org\n",
+          "executed": false
+        },
+        {
+          "check": "string_profiling",
+          "category": "column",
+          "severity": "info",
+          "message": "String profile available online",
+          "table": "public.org",
+          "column": "name",
+          "details": {},
+          "query": "SELECT\n    avg(length(name::text)) AS avg_length,\n    min(length(name::text)) AS min_length,\n    max(length(name::text)) AS max_length\nFROM public.org",
+          "executed": false
+        }
+      ]
+    },
+    {
+      "name": "created_at",
+      "data_type": "timestamp with time zone",
+      "nullable": false,
+      "semantics": [
+        "timestamp"
+      ],
+      "stats": {},
+      "checks": [
+        {
+          "check": "cardinality",
+          "category": "column",
+          "severity": "info",
+          "message": "Cardinality available online",
+          "table": "public.org",
+          "column": "created_at",
+          "details": {},
+          "query": "-- column_stats.sql\n-- Per-column null and cardinality profile. Read-only.\n-- The column placeholder is a quoted identifier; the relation placeholder is a\n-- FROM-clause expression (optionally a LIMIT sample subquery).\nSELECT\n    count(*)                                  AS total_rows,\n    count(*) FILTER (WHERE created_at IS NULL)  AS null_rows,\n    count(DISTINCT created_at)                  AS distinct_values\nFROM public.org\n",
+          "executed": false
+        },
+        {
+          "check": "distribution",
+          "category": "column",
+          "severity": "info",
+          "message": "Distribution available online",
+          "table": "public.org",
+          "column": "created_at",
+          "details": {},
+          "query": "SELECT\n    min(created_at) AS min_value,\n    max(created_at) AS max_value,\n    NULL AS avg_value\nFROM public.org",
+          "executed": false
+        },
+        {
+          "check": "timestamp_detection",
+          "category": "heuristic",
+          "severity": "info",
+          "message": "Freshness check available online",
+          "table": "public.org",
+          "column": "created_at",
+          "details": {
+            "semantic": "timestamp"
+          },
+          "query": "SELECT\n    min(created_at) AS earliest,\n    max(created_at) AS latest\nFROM public.org",
+          "executed": false
+        }
+      ]
+    }
+  ]
+}

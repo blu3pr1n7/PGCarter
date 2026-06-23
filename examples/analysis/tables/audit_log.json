@@ -1,0 +1,215 @@
+{
+  "schema": "public",
+  "name": "audit_log",
+  "metrics": {
+    "column_count": 4
+  },
+  "checks": [
+    {
+      "check": "table_size",
+      "category": "statistics",
+      "severity": "info",
+      "message": "Size metrics require online mode",
+      "table": "public.audit_log",
+      "column": null,
+      "details": {},
+      "query": "-- table_stats.sql\n-- Size metrics and the planner's estimated row count for a single relation.\n-- Read-only. Placeholders are substituted with quoted string literals\n-- (schema name, table name, and qualified name passed to the pg_*_size calls).\nSELECT\n    pg_total_relation_size('public.audit_log')                 AS total_bytes,\n    pg_table_size('public.audit_log')                          AS table_bytes,\n    pg_indexes_size('public.audit_log')                        AS index_bytes,\n    pg_size_pretty(pg_total_relation_size('public.audit_log')) AS total_pretty,\n    pg_size_pretty(pg_table_size('public.audit_log'))          AS table_pretty,\n    pg_size_pretty(pg_indexes_size('public.audit_log'))        AS index_pretty,\n    c.reltuples::bigint                                        AS estimated_rows\nFROM pg_catalog.pg_class c\nJOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\nWHERE n.nspname = 'public'\n  AND c.relname = 'audit_log'\n",
+      "executed": false
+    },
+    {
+      "check": "row_count",
+      "category": "statistics",
+      "severity": "info",
+      "message": "Row count estimate requires online mode",
+      "table": "public.audit_log",
+      "column": null,
+      "details": {},
+      "query": "-- table_stats.sql\n-- Size metrics and the planner's estimated row count for a single relation.\n-- Read-only. Placeholders are substituted with quoted string literals\n-- (schema name, table name, and qualified name passed to the pg_*_size calls).\nSELECT\n    pg_total_relation_size('public.audit_log')                 AS total_bytes,\n    pg_table_size('public.audit_log')                          AS table_bytes,\n    pg_indexes_size('public.audit_log')                        AS index_bytes,\n    pg_size_pretty(pg_total_relation_size('public.audit_log')) AS total_pretty,\n    pg_size_pretty(pg_table_size('public.audit_log'))          AS table_pretty,\n    pg_size_pretty(pg_indexes_size('public.audit_log'))        AS index_pretty,\n    c.reltuples::bigint                                        AS estimated_rows\nFROM pg_catalog.pg_class c\nJOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\nWHERE n.nspname = 'public'\n  AND c.relname = 'audit_log'\n",
+      "executed": false
+    },
+    {
+      "check": "table_structure",
+      "category": "table",
+      "severity": "info",
+      "message": "4 columns",
+      "table": "public.audit_log",
+      "column": null,
+      "details": {
+        "column_count": 4
+      },
+      "query": null,
+      "executed": false
+    },
+    {
+      "check": "duplicate_primary_keys",
+      "category": "quality",
+      "severity": "info",
+      "message": "Duplicate check for 'audit_log_pkey' available online",
+      "table": "public.audit_log",
+      "column": "id",
+      "details": {
+        "constraint": "audit_log_pkey"
+      },
+      "query": "SELECT count(*) AS duplicate_groups, coalesce(sum(c) - count(*), 0) AS extra_rows\nFROM (\n    SELECT id, count(*) AS c\n    FROM public.audit_log\n    WHERE id IS NOT NULL\n    GROUP BY id\n    HAVING count(*) > 1\n) d",
+      "executed": false
+    },
+    {
+      "check": "unused_tables",
+      "category": "quality",
+      "severity": "warning",
+      "message": "Table participates in no foreign-key relationships",
+      "table": "public.audit_log",
+      "column": null,
+      "details": {
+        "inbound_fks": 0,
+        "outbound_fks": 0
+      },
+      "query": null,
+      "executed": false
+    }
+  ],
+  "columns": [
+    {
+      "name": "id",
+      "data_type": "bigint",
+      "nullable": false,
+      "semantics": [
+        "identifier"
+      ],
+      "stats": {
+        "indexed": true
+      },
+      "checks": [
+        {
+          "check": "cardinality",
+          "category": "column",
+          "severity": "info",
+          "message": "Cardinality available online",
+          "table": "public.audit_log",
+          "column": "id",
+          "details": {},
+          "query": "-- column_stats.sql\n-- Per-column null and cardinality profile. Read-only.\n-- The column placeholder is a quoted identifier; the relation placeholder is a\n-- FROM-clause expression (optionally a LIMIT sample subquery).\nSELECT\n    count(*)                                  AS total_rows,\n    count(*) FILTER (WHERE id IS NULL)  AS null_rows,\n    count(DISTINCT id)                  AS distinct_values\nFROM public.audit_log\n",
+          "executed": false
+        },
+        {
+          "check": "distribution",
+          "category": "column",
+          "severity": "info",
+          "message": "Distribution available online",
+          "table": "public.audit_log",
+          "column": "id",
+          "details": {},
+          "query": "SELECT\n    min(id) AS min_value,\n    max(id) AS max_value,\n    avg(id::double precision) AS avg_value\nFROM public.audit_log",
+          "executed": false
+        },
+        {
+          "check": "identifier_detection",
+          "category": "heuristic",
+          "severity": "info",
+          "message": "Identifier-like column",
+          "table": "public.audit_log",
+          "column": "id",
+          "details": {
+            "semantic": "identifier",
+            "indexed": true
+          },
+          "query": null,
+          "executed": false
+        }
+      ]
+    },
+    {
+      "name": "table_name",
+      "data_type": "text",
+      "nullable": false,
+      "semantics": [],
+      "stats": {},
+      "checks": [
+        {
+          "check": "cardinality",
+          "category": "column",
+          "severity": "info",
+          "message": "Cardinality available online",
+          "table": "public.audit_log",
+          "column": "table_name",
+          "details": {},
+          "query": "-- column_stats.sql\n-- Per-column null and cardinality profile. Read-only.\n-- The column placeholder is a quoted identifier; the relation placeholder is a\n-- FROM-clause expression (optionally a LIMIT sample subquery).\nSELECT\n    count(*)                                  AS total_rows,\n    count(*) FILTER (WHERE table_name IS NULL)  AS null_rows,\n    count(DISTINCT table_name)                  AS distinct_values\nFROM public.audit_log\n",
+          "executed": false
+        },
+        {
+          "check": "string_profiling",
+          "category": "column",
+          "severity": "info",
+          "message": "String profile available online",
+          "table": "public.audit_log",
+          "column": "table_name",
+          "details": {},
+          "query": "SELECT\n    avg(length(table_name::text)) AS avg_length,\n    min(length(table_name::text)) AS min_length,\n    max(length(table_name::text)) AS max_length\nFROM public.audit_log",
+          "executed": false
+        }
+      ]
+    },
+    {
+      "name": "action",
+      "data_type": "text",
+      "nullable": false,
+      "semantics": [],
+      "stats": {},
+      "checks": [
+        {
+          "check": "cardinality",
+          "category": "column",
+          "severity": "info",
+          "message": "Cardinality available online",
+          "table": "public.audit_log",
+          "column": "action",
+          "details": {},
+          "query": "-- column_stats.sql\n-- Per-column null and cardinality profile. Read-only.\n-- The column placeholder is a quoted identifier; the relation placeholder is a\n-- FROM-clause expression (optionally a LIMIT sample subquery).\nSELECT\n    count(*)                                  AS total_rows,\n    count(*) FILTER (WHERE action IS NULL)  AS null_rows,\n    count(DISTINCT action)                  AS distinct_values\nFROM public.audit_log\n",
+          "executed": false
+        },
+        {
+          "check": "string_profiling",
+          "category": "column",
+          "severity": "info",
+          "message": "String profile available online",
+          "table": "public.audit_log",
+          "column": "action",
+          "details": {},
+          "query": "SELECT\n    avg(length(action::text)) AS avg_length,\n    min(length(action::text)) AS min_length,\n    max(length(action::text)) AS max_length\nFROM public.audit_log",
+          "executed": false
+        }
+      ]
+    },
+    {
+      "name": "at",
+      "data_type": "timestamp with time zone",
+      "nullable": false,
+      "semantics": [],
+      "stats": {},
+      "checks": [
+        {
+          "check": "cardinality",
+          "category": "column",
+          "severity": "info",
+          "message": "Cardinality available online",
+          "table": "public.audit_log",
+          "column": "at",
+          "details": {},
+          "query": "-- column_stats.sql\n-- Per-column null and cardinality profile. Read-only.\n-- The column placeholder is a quoted identifier; the relation placeholder is a\n-- FROM-clause expression (optionally a LIMIT sample subquery).\nSELECT\n    count(*)                                  AS total_rows,\n    count(*) FILTER (WHERE at IS NULL)  AS null_rows,\n    count(DISTINCT at)                  AS distinct_values\nFROM public.audit_log\n",
+          "executed": false
+        },
+        {
+          "check": "distribution",
+          "category": "column",
+          "severity": "info",
+          "message": "Distribution available online",
+          "table": "public.audit_log",
+          "column": "at",
+          "details": {},
+          "query": "SELECT\n    min(at) AS min_value,\n    max(at) AS max_value,\n    NULL AS avg_value\nFROM public.audit_log",
+          "executed": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+# {{ report.database }} — Database Analysis
+
+Generated: {{ report.generated_at }}
+
+Mode: **{{ report.mode }}**{% if report.sample_size %} · Sample size: {{ report.sample_size }}{% endif %} · Schemas: {{ report.schemas | join(", ") }}
+
+## Summary
+
+| Metric | Value |
+| --- | ---: |
+| Tables analyzed | {{ report.summary.tables_analyzed }} |
+| Checks run | {{ report.summary.checks_run }} |
+| Warnings | {{ report.summary.warning_count }} |
+| Critical | {{ report.summary.critical_count }} |
+
+{% if report.summary.results_by_severity %}
+Results by severity:
+{% for sev, count in report.summary.results_by_severity.items() %}
+- **{{ sev }}**: {{ count }}
+{% endfor %}
+{% endif %}
+
+## Tables
+
+| Table | Columns | Est. rows | Total size | Warnings |
+| --- | ---: | ---: | --- | ---: |
+{% for t in tables %}
+| `{{ t.schema }}.{{ t.name }}` | {{ t.columns | length }} | {{ t.metrics.estimated_rows | default("—", true) }} | {{ t.metrics.total_size | default("—", true) }} | {{ t.checks | selectattr("severity", "in", ["warning", "critical"]) | list | length }} |
+{% endfor %}
+
+{% if warnings %}
+## Top warnings
+
+{% for w in warnings[:25] %}
+- **{{ w.severity | upper }}** [{{ w.check }}] `{{ w.table }}`{% if w.column %}.`{{ w.column }}`{% endif %} — {{ w.message }}
+{% endfor %}
+{% if warnings | length > 25 %}
+_…and {{ warnings | length - 25 }} more (see `warnings.md`)._
+{% endif %}
+{% else %}
+No warnings raised.
+{% endif %}

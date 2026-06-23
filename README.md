@@ -1,7 +1,9 @@
 # sql-dump
 
-A production-quality PostgreSQL **schema inventory, SQL extraction, and
-documentation generation** tool.
+A production-quality PostgreSQL **schema inventory, SQL extraction,
+documentation generation, and database-shape analysis** tool. `sql-dump` is
+both a schema extraction tool and a lightweight database discovery and
+profiling platform.
 
 `sql-dump` connects to a PostgreSQL database and produces three independent
 outputs:
@@ -12,8 +14,14 @@ outputs:
 3. **Documentation** — Markdown rendered entirely from user-provided Jinja2
    templates.
 
+A fourth capability, the **`analyze` subcommand**, performs automated database
+shape analysis — table sizes, column characteristics, data-quality indicators,
+relationships, and schema-design patterns. See
+[Database analysis & profiling](#database-analysis--profiling).
+
 > **It never exports table data.** This is a schema and metadata extraction
-> utility only — no `INSERT`, no `COPY`, no row contents.
+> utility only — no `INSERT`, no `COPY`, no row contents. The analyzer is
+> likewise read-only: every profiling query is a validated `SELECT`.
 
 ## Design boundaries
 
@@ -183,6 +191,143 @@ continues. Everything is summarised in `report.json`:
 
 Exit codes: `0` success, `2` completed with recorded errors, `1` fatal error.
 
+## Database analysis & profiling
+
+The `analyze` subcommand turns the inventory into an understanding of the
+database's *shape*: what kinds of datasets exist, how big tables are, column
+characteristics, data-quality signals, relationships, and likely design issues.
+It is **not** a data dump — it profiles structure and statistics.
+
+The existing JSON inventory is the analyzer's first input source, so it runs in
+two modes.
+
+### Offline mode (structure only, no database)
+
+Analyse an existing JSON inventory with no connection. Identifies possible
+checks from table structure, column names, data types, constraints,
+relationships, and indexes — and records the exact read-only SQL each check
+*would* run online.
+
+```bash
+sql-dump analyze --input ./inventory/json
+```
+
+### Online mode (connect and profile)
+
+Connects to PostgreSQL and enriches the structural analysis with row counts,
+null statistics, cardinality estimates, value distributions, freshness checks,
+and size metrics.
+
+```bash
+sql-dump analyze \
+  --database mydb \
+  --schema public \
+  --output ./analysis \
+  --sample-size 10000
+```
+
+| Argument | Default | Notes |
+| --- | --- | --- |
+| `--input` | — | JSON inventory directory → **offline** mode |
+| `--database` | — | connect & profile → **online** mode |
+| `--host`/`--port`/`--user`/`--password` | localhost/5432/postgres/`PGPASSWORD` | online connection |
+| `--schema` | `public` | repeatable |
+| `--output` | `./analysis` | output directory |
+| `--templates-dir` | `./templates` | Jinja2 templates for analysis docs |
+| `--config` | — | analysis YAML (enabled checks, thresholds) |
+| `--sample-size` | — | row cap for expensive per-column scans |
+
+Provide `--input` (offline), `--database` (online), or both (use the JSON as the
+inventory base while connecting for statistics).
+
+### Output
+
+```
+analysis/
+├── report.json          # full analysis (tables, metrics, checks, warnings)
+├── report.md            # human-readable summary (rendered from a template)
+├── warnings.json        # every non-informational finding
+├── tables/
+│   ├── users.json       # per-table metrics, columns, checks
+│   └── orders.json
+├── run-report.json      # run summary (extracted counts / errors)
+└── docs/analysis/
+    ├── index.md         # rendered overview
+    ├── warnings.md
+    └── tables/<table>.md
+```
+
+A worked example lives in [`examples/analysis/`](examples/analysis/).
+
+### Checks
+
+Checks are plugin-style: each is a class registered with `@register`, and
+adding a new check requires nothing more than dropping a new class into the
+relevant `sql_dump/analyzer/checks/` module. Categories:
+
+- **Tables** — `table_size`, `row_count` (empty / extremely large), and
+  `growth_indicators` (freshness window from `created_at`/`updated_at`/…),
+  plus structural `table_structure` (missing primary key, very wide tables).
+- **Columns** — `null_analysis`, `cardinality` (unique identifiers, low
+  cardinality, text enums), `distribution` (min/max/avg), `string_profiling`
+  (avg/min/max length), and name heuristics: `identifier_detection`,
+  `timestamp_detection`, `email_detection`, `status_columns`,
+  `suspicious_columns`.
+- **Indexes** — `duplicate_indexes`, `missing_fk_indexes`, `unused_indexes`.
+- **Relationships** — `heavily_referenced` (fan-in importance),
+  `relationship_depth`, `orphan_relationships` (rows with a missing parent).
+- **Quality** — `duplicate_primary_keys`, `duplicate_unique_values`,
+  `unused_tables`.
+
+Each finding has a severity (`info`/`warning`/`critical`); warnings and
+criticals are collected into `warnings.json`.
+
+### Query safety & performance
+
+Every generated query is mechanically validated to be a single read-only
+`SELECT`/`WITH` with no `INSERT`/`UPDATE`/`DELETE`/`DROP`/`TRUNCATE`/`ALTER`/…
+(see `sql_dump/analyzer/queries.py::assert_safe`). Identifiers are quoted and
+schema-qualified. Row-count and size checks prefer PostgreSQL's own statistics
+(`pg_class.reltuples`, `pg_total_relation_size`) over scanning, and
+`--sample-size N` bounds expensive per-column aggregates with a `LIMIT`
+subquery. Identical queries from different checks share one round trip.
+
+### Configuration
+
+```yaml
+analysis:
+  enabled_checks:        # omit to run every check
+    - null_analysis
+    - cardinality
+    - table_size
+  thresholds:
+    high_null_percentage: 80
+    low_cardinality_limit: 10
+    large_table_rows: 10000000
+    unique_ratio: 0.99
+    long_text_length: 10000
+  # sample_size: 10000   # --sample-size overrides
+```
+
+```bash
+sql-dump analyze --input ./inventory/json --config analysis.yml
+```
+
+A ready-to-edit example is in [`analysis.yml`](analysis.yml).
+
+### Analysis templates
+
+Like the rest of the project, analysis documentation is **completely
+template-driven** — no Markdown is embedded in Python. Add to `templates/`:
+
+```
+templates/
+├── analysis.md.j2          # overview (report.md + docs/analysis/index.md)
+├── table_analysis.md.j2    # per table
+├── column_analysis.md.j2   # per-column fragment (included by table_analysis)
+└── warnings.md.j2          # warnings list
+```
+
 ## Development
 
 ```bash
@@ -203,7 +348,8 @@ category.
 ```bash
 make db-up             # start the test DB and wait until healthy
 make test-integration  # run integration tests against it
-make e2e               # run the CLI end-to-end into ./build/e2e
+make e2e               # run the extraction CLI end-to-end into ./build/e2e
+make e2e-analyze       # run an online analysis into ./build/analysis
 make test-all          # unit + integration
 make db-down           # tear down (removes the data)
 ```
@@ -215,7 +361,7 @@ generated `apply.sql` replays cleanly into a fresh database.
 
 ```
 sql_dump/
-├── cli.py            # argparse entry point
+├── cli.py            # argparse entry point (dispatches the analyze subcommand)
 ├── config.py         # configuration + defaults
 ├── main.py           # orchestration
 ├── report.py         # run report
@@ -224,5 +370,17 @@ sql_dump/
 ├── extractor/        # one module per asset category + orchestrator
 ├── sql/              # deterministic DDL generation (template-free)
 ├── docs/             # Jinja2 renderer (no SQL)
-└── writers/          # SQL / JSON / DOT / apply.sql writers
+├── writers/          # SQL / JSON / DOT / apply.sql writers
+└── analyzer/         # database shape analysis & profiling
+    ├── cli.py        #   analyze subcommand
+    ├── config.py     #   analysis config (enabled checks, thresholds)
+    ├── models.py     #   analysis result models
+    ├── heuristics.py #   column name/type semantics
+    ├── queries.py    #   read-only SQL builders + safety guard
+    ├── queries/      #   *.sql templates (table_stats, column_stats, relationships)
+    ├── rules.py      #   Check base, registry, AnalysisContext
+    ├── checks/       #   plugin checks: tables/columns/indexes/relationships/quality/statistics
+    ├── engine.py     #   runs checks, assembles the report
+    ├── loader.py     #   reconstruct an Inventory from JSON (offline input)
+    └── writer.py     #   analysis JSON + Jinja2 docs
 ```

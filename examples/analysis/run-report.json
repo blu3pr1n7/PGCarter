@@ -1,0 +1,35 @@
+{
+  "database": "sqldump_test",
+  "started_at": "2026-06-23T21:45:09.196702+00:00",
+  "finished_at": "2026-06-23T21:45:09.213084+00:00",
+  "summary": {
+    "extracted": {
+      "checks_run": 63,
+      "warnings": 1
+    },
+    "skipped_count": 0,
+    "warning_count": 0,
+    "error_count": 0,
+    "generated_file_count": 11
+  },
+  "extracted": {
+    "checks_run": 63,
+    "warnings": 1
+  },
+  "skipped": [],
+  "warnings": [],
+  "errors": [],
+  "generated_files": [
+    "examples/analysis/docs/analysis/index.md",
+    "examples/analysis/docs/analysis/tables/audit_log.md",
+    "examples/analysis/docs/analysis/tables/customer.md",
+    "examples/analysis/docs/analysis/tables/org.md",
+    "examples/analysis/docs/analysis/warnings.md",
+    "examples/analysis/report.json",
+    "examples/analysis/report.md",
+    "examples/analysis/tables/audit_log.json",
+    "examples/analysis/tables/customer.json",
+    "examples/analysis/tables/org.json",
+    "examples/analysis/warnings.json"
+  ]
+}

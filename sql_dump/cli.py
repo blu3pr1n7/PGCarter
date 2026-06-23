@@ -16,7 +16,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="sql-dump",
         description="PostgreSQL schema inventory, SQL extraction, and documentation "
-                    "generation tool. Extracts schema/metadata only — never table data.",
+                    "generation tool. Extracts schema/metadata only — never table data. "
+                    "Use the 'analyze' subcommand for database shape analysis and profiling.",
     )
     parser.add_argument("--host", default="localhost", help="Database host (default: localhost)")
     parser.add_argument("--port", type=int, default=5432, help="Database port (default: 5432)")
@@ -59,6 +60,15 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+
+    # ``sql-dump analyze ...`` routes to the analysis subsystem. The default
+    # (no subcommand) preserves the original extraction CLI verbatim.
+    if argv and argv[0] == "analyze":
+        from .analyzer.cli import analyze_main
+
+        return analyze_main(argv[1:])
+
     args = build_parser().parse_args(argv)
     configure_logging(args.log_level, json_format=args.json_logs)
 

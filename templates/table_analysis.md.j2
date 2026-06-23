@@ -1,0 +1,43 @@
+# Analysis: {{ table.schema }}.{{ table.name }}
+
+{% if table.metrics %}
+## Metrics
+
+| Metric | Value |
+| --- | --- |
+{% if table.metrics.estimated_rows is defined and table.metrics.estimated_rows is not none %}
+| Estimated rows | {{ table.metrics.estimated_rows }} |
+{% endif %}
+{% if table.metrics.total_size %}
+| Total size | {{ table.metrics.total_size }} |
+{% endif %}
+{% if table.metrics.table_size %}
+| Table size | {{ table.metrics.table_size }} |
+{% endif %}
+{% if table.metrics.index_size %}
+| Index size | {{ table.metrics.index_size }} |
+{% endif %}
+{% if table.metrics.column_count is defined and table.metrics.column_count is not none %}
+| Columns | {{ table.metrics.column_count }} |
+{% endif %}
+{% if table.metrics.earliest %}
+| Growth window | {{ table.metrics.earliest }} → {{ table.metrics.latest }} |
+{% endif %}
+{% endif %}
+
+## Columns
+
+| Column | Type | Nullable | Semantics | Notes |
+| --- | --- | :---: | --- | --- |
+{% for c in table.columns %}
+| `{{ c.name }}` | `{{ c.data_type }}` | {{ "yes" if c.nullable else "no" }} | {{ c.semantics | join(", ") }} | {% include "column_analysis.md.j2" %} |
+{% endfor %}
+
+{% set table_warnings = table.checks | selectattr("severity", "in", ["warning", "critical"]) | list %}
+{% if table_warnings %}
+## Findings
+
+{% for w in table_warnings %}
+- **{{ w.severity | upper }}** [{{ w.check }}]{% if w.column %} `{{ w.column }}`{% endif %} — {{ w.message }}
+{% endfor %}
+{% endif %}
