@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/logo.png" alt="pgcarter" width="200">
+  <img src="https://raw.githubusercontent.com/blu3pr1n7/pgcarter/master/docs/assets/logo.png" alt="pgcarter" width="200">
 </p>
 
 <h1 align="center">pgcarter</h1>
@@ -9,7 +9,7 @@
   <a href="https://blu3pr1n7.github.io/PGCarter/"><img src="https://github.com/blu3pr1n7/pgcarter/actions/workflows/docs.yml/badge.svg" alt="Docs"></a>
   <a href="https://pypi.org/project/pgcarter/"><img src="https://img.shields.io/pypi/v/pgcarter.svg" alt="PyPI"></a>
   <img src="https://img.shields.io/badge/python-3.12%2B-blue.svg" alt="Python 3.12+">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-green.svg" alt="License: Apache 2.0"></a>
+  <a href="https://github.com/blu3pr1n7/pgcarter/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-green.svg" alt="License: Apache 2.0"></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
 </p>
 
