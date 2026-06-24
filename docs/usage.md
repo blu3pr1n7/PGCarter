@@ -1,6 +1,6 @@
 # Usage
 
-`sql-dump` has two subcommands. Full flag references live in the
+`pgcarter` has two subcommands. Full flag references live in the
 [CLI reference](cli.md).
 
 ## `index` — schema extraction
@@ -9,7 +9,7 @@ Connect to PostgreSQL and produce executable SQL, JSON metadata, and
 template-driven documentation.
 
 ```bash
-sql-dump index \
+pgcarter index \
   --host localhost \
   --port 5432 \
   --database mydb \
@@ -62,7 +62,7 @@ checks from structure, column names, types, constraints, relationships, and
 indexes — and records the exact read-only SQL each check *would* run online.
 
 ```bash
-sql-dump analyze --input ./inventory/json
+pgcarter analyze --input ./inventory/json
 ```
 
 ### Online mode (connect and profile)
@@ -72,7 +72,7 @@ statistics, cardinality estimates, value distributions, freshness checks, and
 size metrics.
 
 ```bash
-sql-dump analyze \
+pgcarter analyze \
   --database mydb \
   --schema public \
   --output ./analysis \
@@ -107,13 +107,13 @@ thresholds, sampling, and timeouts.
 
 ```bash
 # 1. Extract a schema inventory
-sql-dump index --database mydb --output-dir ./inventory
+pgcarter index --database mydb --output-dir ./inventory
 
 # 2. Profile it offline (no DB needed)
-sql-dump analyze --input ./inventory/json --output ./analysis
+pgcarter analyze --input ./inventory/json --output ./analysis
 
 # 3. Or profile online with sampling and a per-query timeout
-sql-dump analyze --database mydb --output ./analysis \
+pgcarter analyze --database mydb --output ./analysis \
   --sample-size 10000 --statement-timeout 15000
 ```
 

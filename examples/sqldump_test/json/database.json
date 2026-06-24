@@ -1,9 +1,0 @@
-{
-  "name": "sqldump_test",
-  "version": "16.14",
-  "encoding": "UTF8",
-  "collation": "en_US.utf8",
-  "ctype": "en_US.utf8",
-  "owner": "sqldump",
-  "comment": null
-}

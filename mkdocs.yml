@@ -1,12 +1,12 @@
-site_name: sql-dump
+site_name: pgcarter
 site_description: >-
   PostgreSQL schema inventory, SQL extraction, documentation generation, and
   database shape analysis — read-only, never dumps table data.
-site_author: sql-dump contributors
-repo_url: https://github.com/blu3pr1n7/sql-dump
-repo_name: blu3pr1n7/sql-dump
+site_author: pgcarter contributors
+repo_url: https://github.com/blu3pr1n7/pgcarter
+repo_name: blu3pr1n7/pgcarter
 edit_uri: edit/master/docs/
-copyright: Copyright &copy; sql-dump contributors
+copyright: Copyright &copy; pgcarter contributors
 
 theme:
   name: material

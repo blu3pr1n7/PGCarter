@@ -3,8 +3,8 @@
 ## Repository setup
 
 ```bash
-git clone git@github.com:blu3pr1n7/sql-dump.git
-cd sql-dump
+git clone git@github.com:blu3pr1n7/pgcarter.git
+cd pgcarter
 uv venv --python 3.12
 uv pip install -e ".[dev]"
 ```
@@ -45,7 +45,7 @@ make db-down             # tear down (removes the data)
 ```bash
 make lint                 # ruff check
 make format               # ruff format + ruff check --fix
-make typecheck            # mypy sql_dump
+make typecheck            # mypy pgcarter
 ```
 
 Style: line length 100, ruff rule sets `E`, `F`, `I`, `UP`, `B`. All public
@@ -59,18 +59,18 @@ mkdocs serve              # live-reload preview at http://127.0.0.1:8000
 mkdocs build --strict     # production build (fails on warnings/broken links)
 ```
 
-## Extending sql-dump
+## Extending pgcarter
 
 ### Adding a new extractor
 
-1. Add a metadata dataclass to `sql_dump/models/__init__.py` (the single source
+1. Add a metadata dataclass to `pgcarter/models/__init__.py` (the single source
    of truth shared by SQL generation, JSON, and templates).
-2. Create `sql_dump/extractor/<asset>.py` subclassing `Extractor`, querying the
+2. Create `pgcarter/extractor/<asset>.py` subclassing `Extractor`, querying the
    catalogs and returning your model.
 3. Wire it into `InventoryExtractor.extract()` in
-   `sql_dump/extractor/__init__.py` (wrap the call in `_safe(...)` so a failure
+   `pgcarter/extractor/__init__.py` (wrap the call in `_safe(...)` so a failure
    is recorded, not fatal).
-4. Emit it from the writers (`sql_dump/writers/`) and add a template if it should
+4. Emit it from the writers (`pgcarter/writers/`) and add a template if it should
    appear in docs.
 5. Add unit tests using the `FakeDB` pattern in `tests/test_extractors.py`.
 
@@ -79,8 +79,8 @@ mkdocs build --strict     # production build (fails on warnings/broken links)
 Checks are plugin-style — adding one requires only a new class:
 
 ```python
-from sql_dump.analyzer.models import WARNING, CheckResult
-from sql_dump.analyzer.rules import ColumnCheck, register
+from pgcarter.analyzer.models import WARNING, CheckResult
+from pgcarter.analyzer.rules import ColumnCheck, register
 
 
 @register

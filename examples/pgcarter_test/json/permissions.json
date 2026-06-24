@@ -1,0 +1,498 @@
+[
+  {
+    "object_type": "schema",
+    "object_name": "public",
+    "grantee": "PUBLIC",
+    "privilege": "USAGE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "schema",
+    "object_name": "public",
+    "grantee": "app_readonly",
+    "privilege": "USAGE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "schema",
+    "object_name": "public",
+    "grantee": "pg_database_owner",
+    "privilege": "CREATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "schema",
+    "object_name": "public",
+    "grantee": "pg_database_owner",
+    "privilege": "USAGE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.active_customers",
+    "grantee": "app_readonly",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.active_customers",
+    "grantee": "pgcarter",
+    "privilege": "DELETE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.active_customers",
+    "grantee": "pgcarter",
+    "privilege": "INSERT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.active_customers",
+    "grantee": "pgcarter",
+    "privilege": "REFERENCES",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.active_customers",
+    "grantee": "pgcarter",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.active_customers",
+    "grantee": "pgcarter",
+    "privilege": "TRIGGER",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.active_customers",
+    "grantee": "pgcarter",
+    "privilege": "TRUNCATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.active_customers",
+    "grantee": "pgcarter",
+    "privilege": "UPDATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.audit_log",
+    "grantee": "app_readonly",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.audit_log",
+    "grantee": "pgcarter",
+    "privilege": "DELETE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.audit_log",
+    "grantee": "pgcarter",
+    "privilege": "INSERT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.audit_log",
+    "grantee": "pgcarter",
+    "privilege": "REFERENCES",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.audit_log",
+    "grantee": "pgcarter",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.audit_log",
+    "grantee": "pgcarter",
+    "privilege": "TRIGGER",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.audit_log",
+    "grantee": "pgcarter",
+    "privilege": "TRUNCATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.audit_log",
+    "grantee": "pgcarter",
+    "privilege": "UPDATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "app_readonly",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "app_readwrite",
+    "privilege": "DELETE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "app_readwrite",
+    "privilege": "INSERT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "app_readwrite",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "app_readwrite",
+    "privilege": "UPDATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "pgcarter",
+    "privilege": "DELETE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "pgcarter",
+    "privilege": "INSERT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "pgcarter",
+    "privilege": "REFERENCES",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "pgcarter",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "pgcarter",
+    "privilege": "TRIGGER",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "pgcarter",
+    "privilege": "TRUNCATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer",
+    "grantee": "pgcarter",
+    "privilege": "UPDATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer_counts",
+    "grantee": "app_readonly",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer_counts",
+    "grantee": "pgcarter",
+    "privilege": "DELETE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer_counts",
+    "grantee": "pgcarter",
+    "privilege": "INSERT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer_counts",
+    "grantee": "pgcarter",
+    "privilege": "REFERENCES",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer_counts",
+    "grantee": "pgcarter",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer_counts",
+    "grantee": "pgcarter",
+    "privilege": "TRIGGER",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer_counts",
+    "grantee": "pgcarter",
+    "privilege": "TRUNCATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.customer_counts",
+    "grantee": "pgcarter",
+    "privilege": "UPDATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "sequence",
+    "object_name": "public.invoice_number_seq",
+    "grantee": "app_readwrite",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "sequence",
+    "object_name": "public.invoice_number_seq",
+    "grantee": "app_readwrite",
+    "privilege": "USAGE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "sequence",
+    "object_name": "public.invoice_number_seq",
+    "grantee": "pgcarter",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "sequence",
+    "object_name": "public.invoice_number_seq",
+    "grantee": "pgcarter",
+    "privilege": "UPDATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "sequence",
+    "object_name": "public.invoice_number_seq",
+    "grantee": "pgcarter",
+    "privilege": "USAGE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "app_readonly",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "app_readwrite",
+    "privilege": "DELETE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "app_readwrite",
+    "privilege": "INSERT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "app_readwrite",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "app_readwrite",
+    "privilege": "UPDATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "pgcarter",
+    "privilege": "DELETE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "pgcarter",
+    "privilege": "INSERT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "pgcarter",
+    "privilege": "REFERENCES",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "pgcarter",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "pgcarter",
+    "privilege": "TRIGGER",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "pgcarter",
+    "privilege": "TRUNCATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "table",
+    "object_name": "public.org",
+    "grantee": "pgcarter",
+    "privilege": "UPDATE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "column",
+    "object_name": "public.customer",
+    "grantee": "app_readonly",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": "email"
+  },
+  {
+    "object_type": "column",
+    "object_name": "public.customer",
+    "grantee": "app_readonly",
+    "privilege": "SELECT",
+    "grantable": false,
+    "column": "id"
+  },
+  {
+    "object_type": "function",
+    "object_name": "public.full_display_name(p_first text, p_last text)",
+    "grantee": "PUBLIC",
+    "privilege": "EXECUTE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "function",
+    "object_name": "public.full_display_name(p_first text, p_last text)",
+    "grantee": "app_readonly",
+    "privilege": "EXECUTE",
+    "grantable": false,
+    "column": null
+  },
+  {
+    "object_type": "function",
+    "object_name": "public.full_display_name(p_first text, p_last text)",
+    "grantee": "pgcarter",
+    "privilege": "EXECUTE",
+    "grantable": false,
+    "column": null
+  }
+]

@@ -1,0 +1,95 @@
+[
+  {
+    "schema": "public",
+    "name": "audit_trigger",
+    "kind": "function",
+    "signature": "audit_trigger()",
+    "arguments": "",
+    "return_type": "trigger",
+    "language": "plpgsql",
+    "volatility": "VOLATILE",
+    "security_definer": true,
+    "owner": "pgcarter",
+    "definition": "CREATE OR REPLACE FUNCTION public.audit_trigger()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\nAS $function$\nBEGIN\n    INSERT INTO audit_log (table_name, action)\n    VALUES (TG_TABLE_NAME, TG_OP);\n    RETURN NEW;\nEND;\n$function$\n",
+    "parameters": [],
+    "comment": null,
+    "grants": []
+  },
+  {
+    "schema": "public",
+    "name": "deactivate_customer",
+    "kind": "procedure",
+    "signature": "deactivate_customer(IN p_id bigint)",
+    "arguments": "IN p_id bigint",
+    "return_type": null,
+    "language": "plpgsql",
+    "volatility": "VOLATILE",
+    "security_definer": false,
+    "owner": "pgcarter",
+    "definition": "CREATE OR REPLACE PROCEDURE public.deactivate_customer(IN p_id bigint)\n LANGUAGE plpgsql\nAS $procedure$\nBEGIN\n    UPDATE customer SET status = 'inactive' WHERE id = p_id;\nEND;\n$procedure$\n",
+    "parameters": [
+      {
+        "name": "p_id",
+        "mode": "IN",
+        "data_type": "bigint",
+        "default": null
+      }
+    ],
+    "comment": null,
+    "grants": []
+  },
+  {
+    "schema": "public",
+    "name": "full_display_name",
+    "kind": "function",
+    "signature": "full_display_name(p_first text, p_last text)",
+    "arguments": "p_first text, p_last text",
+    "return_type": "text",
+    "language": "sql",
+    "volatility": "IMMUTABLE",
+    "security_definer": false,
+    "owner": "pgcarter",
+    "definition": "CREATE OR REPLACE FUNCTION public.full_display_name(p_first text, p_last text)\n RETURNS text\n LANGUAGE sql\n IMMUTABLE\nAS $function$\n    SELECT trim(coalesce(p_first, '') || ' ' || coalesce(p_last, ''));\n$function$\n",
+    "parameters": [
+      {
+        "name": "p_first",
+        "mode": "IN",
+        "data_type": "text",
+        "default": null
+      },
+      {
+        "name": "p_last",
+        "mode": "IN",
+        "data_type": "text",
+        "default": null
+      }
+    ],
+    "comment": null,
+    "grants": [
+      {
+        "object_type": "function",
+        "object_name": "public.full_display_name(p_first text, p_last text)",
+        "grantee": "PUBLIC",
+        "privilege": "EXECUTE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "function",
+        "object_name": "public.full_display_name(p_first text, p_last text)",
+        "grantee": "app_readonly",
+        "privilege": "EXECUTE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "function",
+        "object_name": "public.full_display_name(p_first text, p_last text)",
+        "grantee": "pgcarter",
+        "privilege": "EXECUTE",
+        "grantable": false,
+        "column": null
+      }
+    ]
+  }
+]

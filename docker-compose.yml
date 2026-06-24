@@ -1,4 +1,4 @@
-# Dedicated PostgreSQL instance for sql-dump e2e / integration tests.
+# Dedicated PostgreSQL instance for pgcarter e2e / integration tests.
 #
 # Runs on a non-default host port (55432) so it never collides with any local
 # PostgreSQL or other project containers. The seed script under
@@ -13,17 +13,17 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: sql-dump-test-db
+    container_name: pgcarter-test-db
     environment:
-      POSTGRES_USER: sqldump
-      POSTGRES_PASSWORD: sqldump
-      POSTGRES_DB: sqldump_test
+      POSTGRES_USER: pgcarter
+      POSTGRES_PASSWORD: pgcarter
+      POSTGRES_DB: pgcarter_test
     ports:
       - "55432:5432"
     volumes:
       - ./tests/fixtures/seed.sql:/docker-entrypoint-initdb.d/01-seed.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sqldump -d sqldump_test"]
+      test: ["CMD-SHELL", "pg_isready -U pgcarter -d pgcarter_test"]
       interval: 2s
       timeout: 3s
       retries: 30

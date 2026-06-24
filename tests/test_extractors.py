@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from sql_dump.extractor.database import DatabaseExtractor
-from sql_dump.extractor.indexes import IndexExtractor
-from sql_dump.extractor.permissions import PermissionExtractor
-from sql_dump.extractor.tables import TableExtractor
-from sql_dump.extractor.triggers import _decode
-from sql_dump.report import Report
+from pgcarter.extractor.database import DatabaseExtractor
+from pgcarter.extractor.indexes import IndexExtractor
+from pgcarter.extractor.permissions import PermissionExtractor
+from pgcarter.extractor.tables import TableExtractor
+from pgcarter.extractor.triggers import _decode
+from pgcarter.report import Report
 
 
 class FakeDB:

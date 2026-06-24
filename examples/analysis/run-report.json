@@ -1,5 +1,5 @@
 {
-  "database": "sqldump_test",
+  "database": "pgcarter_test",
   "started_at": "2026-06-23T21:45:09.196702+00:00",
   "finished_at": "2026-06-23T21:45:09.213084+00:00",
   "summary": {

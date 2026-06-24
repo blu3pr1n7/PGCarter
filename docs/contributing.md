@@ -38,7 +38,7 @@ Contributions are welcome. This guide covers the workflow and expectations.
   database or emits row data. Analysis SQL must pass `assert_safe`.
 - **Resilience.** A failure in one extractor or check should be recorded in the
   run report, not abort the whole run.
-- **Imports are absolute** (`from sql_dump.… import …`), never relative.
+- **Imports are absolute** (`from pgcarter.… import …`), never relative.
 
 ## Commit & PR conventions
 

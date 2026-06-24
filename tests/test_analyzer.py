@@ -17,12 +17,12 @@ from typing import Any
 
 import pytest
 
-from sql_dump.analyzer import heuristics
-from sql_dump.analyzer.config import AnalysisConfig, load_analysis_config
-from sql_dump.analyzer.engine import AnalysisEngine
-from sql_dump.analyzer.loader import InventoryLoadError, load_inventory
-from sql_dump.analyzer.models import CRITICAL
-from sql_dump.analyzer.queries import (
+from pgcarter.analyzer import heuristics
+from pgcarter.analyzer.config import AnalysisConfig, load_analysis_config
+from pgcarter.analyzer.engine import AnalysisEngine
+from pgcarter.analyzer.loader import InventoryLoadError, load_inventory
+from pgcarter.analyzer.models import CRITICAL
+from pgcarter.analyzer.queries import (
     UnsafeQueryError,
     assert_safe,
     duplicate_values_sql,
@@ -32,15 +32,15 @@ from sql_dump.analyzer.queries import (
     string_profile_sql,
     value_distribution_sql,
 )
-from sql_dump.analyzer.rules import (
+from pgcarter.analyzer.rules import (
     constraint_columns,
     instantiate_checks,
     registered_checks,
 )
-from sql_dump.analyzer.writer import write_analysis
-from sql_dump.models import Constraint
-from sql_dump.report import Report
-from sql_dump.writers.json_writer import JsonWriter
+from pgcarter.analyzer.writer import write_analysis
+from pgcarter.models import Constraint
+from pgcarter.report import Report
+from pgcarter.writers.json_writer import JsonWriter
 
 TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates"
 

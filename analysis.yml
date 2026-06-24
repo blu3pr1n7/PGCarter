@@ -1,6 +1,6 @@
-# Example sql-dump analysis configuration.
+# Example pgcarter analysis configuration.
 #
-#   sql-dump analyze --input ./inventory/json --config analysis.yml
+#   pgcarter analyze --input ./inventory/json --config analysis.yml
 #
 # All keys are optional. Omitting `enabled_checks` runs every registered check;
 # omitting a threshold uses its documented default.

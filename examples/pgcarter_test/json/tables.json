@@ -1,0 +1,577 @@
+[
+  {
+    "schema": "public",
+    "name": "audit_log",
+    "owner": "pgcarter",
+    "kind": "table",
+    "comment": null,
+    "columns": [
+      {
+        "name": "id",
+        "position": 1,
+        "data_type": "bigint",
+        "nullable": false,
+        "default": "nextval('audit_log_id_seq'::regclass)",
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "table_name",
+        "position": 2,
+        "data_type": "text",
+        "nullable": false,
+        "default": null,
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "action",
+        "position": 3,
+        "data_type": "text",
+        "nullable": false,
+        "default": null,
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "at",
+        "position": 4,
+        "data_type": "timestamp with time zone",
+        "nullable": false,
+        "default": "now()",
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      }
+    ],
+    "constraints": [
+      {
+        "name": "audit_log_pkey",
+        "schema": "public",
+        "table": "audit_log",
+        "type": "PRIMARY KEY",
+        "definition": "PRIMARY KEY (id)",
+        "columns": [],
+        "referenced_schema": null,
+        "referenced_table": null,
+        "referenced_columns": []
+      }
+    ],
+    "grants": [
+      {
+        "object_type": "table",
+        "object_name": "public.audit_log",
+        "grantee": "app_readonly",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.audit_log",
+        "grantee": "pgcarter",
+        "privilege": "DELETE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.audit_log",
+        "grantee": "pgcarter",
+        "privilege": "INSERT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.audit_log",
+        "grantee": "pgcarter",
+        "privilege": "REFERENCES",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.audit_log",
+        "grantee": "pgcarter",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.audit_log",
+        "grantee": "pgcarter",
+        "privilege": "TRIGGER",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.audit_log",
+        "grantee": "pgcarter",
+        "privilege": "TRUNCATE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.audit_log",
+        "grantee": "pgcarter",
+        "privilege": "UPDATE",
+        "grantable": false,
+        "column": null
+      }
+    ]
+  },
+  {
+    "schema": "public",
+    "name": "customer",
+    "owner": "pgcarter",
+    "kind": "table",
+    "comment": "Customers belonging to an organisation",
+    "columns": [
+      {
+        "name": "id",
+        "position": 1,
+        "data_type": "bigint",
+        "nullable": false,
+        "default": null,
+        "is_identity": true,
+        "identity_generation": "BY DEFAULT",
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "org_id",
+        "position": 2,
+        "data_type": "bigint",
+        "nullable": false,
+        "default": null,
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "email",
+        "position": 3,
+        "data_type": "text",
+        "nullable": false,
+        "default": null,
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "first_name",
+        "position": 4,
+        "data_type": "text",
+        "nullable": true,
+        "default": null,
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "last_name",
+        "position": 5,
+        "data_type": "text",
+        "nullable": true,
+        "default": null,
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "full_name",
+        "position": 6,
+        "data_type": "text",
+        "nullable": true,
+        "default": "((COALESCE(first_name, ''::text) || ' '::text) || COALESCE(last_name, ''::text))",
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": true,
+        "generation_expression": "((COALESCE(first_name, ''::text) || ' '::text) || COALESCE(last_name, ''::text))",
+        "comment": null
+      },
+      {
+        "name": "balance",
+        "position": 7,
+        "data_type": "numeric(12,2)",
+        "nullable": false,
+        "default": "0",
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "status",
+        "position": 8,
+        "data_type": "text",
+        "nullable": false,
+        "default": "'active'::text",
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "created_at",
+        "position": 9,
+        "data_type": "timestamp with time zone",
+        "nullable": false,
+        "default": "now()",
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      }
+    ],
+    "constraints": [
+      {
+        "name": "customer_balance_chk",
+        "schema": "public",
+        "table": "customer",
+        "type": "CHECK",
+        "definition": "CHECK (balance >= 0::numeric)",
+        "columns": [],
+        "referenced_schema": null,
+        "referenced_table": null,
+        "referenced_columns": []
+      },
+      {
+        "name": "customer_status_chk",
+        "schema": "public",
+        "table": "customer",
+        "type": "CHECK",
+        "definition": "CHECK (status = ANY (ARRAY['active'::text, 'inactive'::text, 'banned'::text]))",
+        "columns": [],
+        "referenced_schema": null,
+        "referenced_table": null,
+        "referenced_columns": []
+      },
+      {
+        "name": "customer_org_id_fkey",
+        "schema": "public",
+        "table": "customer",
+        "type": "FOREIGN KEY",
+        "definition": "FOREIGN KEY (org_id) REFERENCES org(id) ON DELETE CASCADE",
+        "columns": [],
+        "referenced_schema": "public",
+        "referenced_table": "org",
+        "referenced_columns": []
+      },
+      {
+        "name": "customer_pkey",
+        "schema": "public",
+        "table": "customer",
+        "type": "PRIMARY KEY",
+        "definition": "PRIMARY KEY (id)",
+        "columns": [],
+        "referenced_schema": null,
+        "referenced_table": null,
+        "referenced_columns": []
+      },
+      {
+        "name": "customer_email_key",
+        "schema": "public",
+        "table": "customer",
+        "type": "UNIQUE",
+        "definition": "UNIQUE (email)",
+        "columns": [],
+        "referenced_schema": null,
+        "referenced_table": null,
+        "referenced_columns": []
+      }
+    ],
+    "grants": [
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "app_readonly",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "app_readwrite",
+        "privilege": "DELETE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "app_readwrite",
+        "privilege": "INSERT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "app_readwrite",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "app_readwrite",
+        "privilege": "UPDATE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "pgcarter",
+        "privilege": "DELETE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "pgcarter",
+        "privilege": "INSERT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "pgcarter",
+        "privilege": "REFERENCES",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "pgcarter",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "pgcarter",
+        "privilege": "TRIGGER",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "pgcarter",
+        "privilege": "TRUNCATE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer",
+        "grantee": "pgcarter",
+        "privilege": "UPDATE",
+        "grantable": false,
+        "column": null
+      }
+    ]
+  },
+  {
+    "schema": "public",
+    "name": "org",
+    "owner": "pgcarter",
+    "kind": "table",
+    "comment": "Organisations",
+    "columns": [
+      {
+        "name": "id",
+        "position": 1,
+        "data_type": "bigint",
+        "nullable": false,
+        "default": null,
+        "is_identity": true,
+        "identity_generation": "ALWAYS",
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      },
+      {
+        "name": "name",
+        "position": 2,
+        "data_type": "text",
+        "nullable": false,
+        "default": null,
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": "Unique display name"
+      },
+      {
+        "name": "created_at",
+        "position": 3,
+        "data_type": "timestamp with time zone",
+        "nullable": false,
+        "default": "now()",
+        "is_identity": false,
+        "identity_generation": null,
+        "is_generated": false,
+        "generation_expression": null,
+        "comment": null
+      }
+    ],
+    "constraints": [
+      {
+        "name": "org_pkey",
+        "schema": "public",
+        "table": "org",
+        "type": "PRIMARY KEY",
+        "definition": "PRIMARY KEY (id)",
+        "columns": [],
+        "referenced_schema": null,
+        "referenced_table": null,
+        "referenced_columns": []
+      },
+      {
+        "name": "org_name_key",
+        "schema": "public",
+        "table": "org",
+        "type": "UNIQUE",
+        "definition": "UNIQUE (name)",
+        "columns": [],
+        "referenced_schema": null,
+        "referenced_table": null,
+        "referenced_columns": []
+      }
+    ],
+    "grants": [
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "app_readonly",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "app_readwrite",
+        "privilege": "DELETE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "app_readwrite",
+        "privilege": "INSERT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "app_readwrite",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "app_readwrite",
+        "privilege": "UPDATE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "pgcarter",
+        "privilege": "DELETE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "pgcarter",
+        "privilege": "INSERT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "pgcarter",
+        "privilege": "REFERENCES",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "pgcarter",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "pgcarter",
+        "privilege": "TRIGGER",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "pgcarter",
+        "privilege": "TRUNCATE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.org",
+        "grantee": "pgcarter",
+        "privilege": "UPDATE",
+        "grantable": false,
+        "column": null
+      }
+    ]
+  }
+]

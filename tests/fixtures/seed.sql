@@ -1,4 +1,4 @@
--- Seed schema for sql-dump integration / e2e tests.
+-- Seed schema for pgcarter integration / e2e tests.
 -- Exercises every asset category the extractor supports:
 -- extensions, roles, schemas, tables (identity + generated + check/fk/unique),
 -- sequences, indexes (incl. partial & expression), views, materialized views,

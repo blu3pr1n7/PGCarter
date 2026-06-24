@@ -1,17 +1,17 @@
-# sql-dump
+# pgcarter
 
 A production-quality PostgreSQL **schema inventory, SQL extraction,
 documentation generation, and database shape-analysis** tool — a lightweight
 PostgreSQL discovery and profiling platform.
 
 !!! note "Read-only by design"
-    `sql-dump` extracts schema and metadata only. It **never** exports table
+    `pgcarter` extracts schema and metadata only. It **never** exports table
     data — no `INSERT`, no `COPY`, no row contents — and every analysis query is
     a validated read-only `SELECT`.
 
 ## What it does
 
-`sql-dump` connects to a PostgreSQL database and produces independent,
+`pgcarter` connects to a PostgreSQL database and produces independent,
 composable outputs:
 
 | Output | Description |
@@ -26,14 +26,14 @@ composable outputs:
 The CLI exposes two subcommands:
 
 ```text
-sql-dump
+pgcarter
    ├── index     # schema extraction → SQL + JSON + docs
    └── analyze   # dataset profiling → statistics, quality checks, warnings
 ```
 
-- **`sql-dump index`** — discover database structure and emit SQL, JSON, and
+- **`pgcarter index`** — discover database structure and emit SQL, JSON, and
   documentation. See [Usage](usage.md#index-schema-extraction).
-- **`sql-dump analyze`** — profile datasets offline (from a JSON inventory) or
+- **`pgcarter analyze`** — profile datasets offline (from a JSON inventory) or
   online (connecting for statistics). See
   [Usage](usage.md#analyze-shape-analysis-profiling).
 

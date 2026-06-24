@@ -6,9 +6,9 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from sql_dump.cli import app
-from sql_dump.config import resolve_config
-from sql_dump.report import Report
+from pgcarter.cli import app
+from pgcarter.config import resolve_config
+from pgcarter.report import Report
 
 runner = CliRunner()
 
@@ -70,8 +70,8 @@ def test_analyze_requires_input_or_database():
 
 
 def test_analyze_offline_runs_end_to_end(tmp_path, sample_inventory):
-    from sql_dump.report import Report as _Report
-    from sql_dump.writers.json_writer import JsonWriter
+    from pgcarter.report import Report as _Report
+    from pgcarter.writers.json_writer import JsonWriter
 
     inventory_dir = tmp_path / "inv"
     JsonWriter(inventory_dir / "json", _Report()).write(sample_inventory)

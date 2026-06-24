@@ -1,5 +1,5 @@
 {
-  "database": "sqldump_test",
+  "database": "pgcarter_test",
   "mode": "offline",
   "schemas": [
     "public"

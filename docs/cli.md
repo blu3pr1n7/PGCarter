@@ -4,9 +4,9 @@ The CLI is built with [Typer](https://typer.tiangolo.com/). Run any command with
 `--help` for the authoritative, always-current list of options:
 
 ```bash
-sql-dump --help
-sql-dump index --help
-sql-dump analyze --help
+pgcarter --help
+pgcarter index --help
+pgcarter analyze --help
 ```
 
 ## Global behaviour
@@ -18,12 +18,12 @@ sql-dump analyze --help
 - **Exit codes**: `0` success, `2` completed with recorded errors, `1` fatal
   error. (`2` is also returned for command-line usage errors.)
 
-## `sql-dump index`
+## `pgcarter index`
 
 Extract a PostgreSQL schema inventory (SQL + JSON + docs).
 
 ```bash
-sql-dump index --database mydb --output-dir ./inventory --templates-dir ./templates
+pgcarter index --database mydb --output-dir ./inventory --templates-dir ./templates
 ```
 
 | Option | Default | Description |
@@ -39,17 +39,17 @@ sql-dump index --database mydb --output-dir ./inventory --templates-dir ./templa
 | `--log-level` | `INFO` (or `LOG_LEVEL`) | `DEBUG`/`INFO`/`WARNING`/`ERROR` |
 | `--pretty` / `--no-pretty` | JSON (or `LOG_PRETTY`) | Colourised console logs |
 
-## `sql-dump analyze`
+## `pgcarter analyze`
 
 Analyze a database's shape: structure offline (from a JSON inventory) or
 statistics online (connecting to PostgreSQL).
 
 ```bash
 # offline
-sql-dump analyze --input ./inventory/json --output ./analysis
+pgcarter analyze --input ./inventory/json --output ./analysis
 
 # online
-sql-dump analyze --database mydb --output ./analysis --sample-size 10000
+pgcarter analyze --database mydb --output ./analysis --sample-size 10000
 ```
 
 | Option | Default | Description |

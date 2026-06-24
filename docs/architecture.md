@@ -1,6 +1,6 @@
 # Architecture
 
-`sql-dump` is organised as a pipeline with strictly separated layers. The
+`pgcarter` is organised as a pipeline with strictly separated layers. The
 metadata models are the single source of truth shared by every downstream
 consumer.
 
@@ -10,19 +10,19 @@ consumer.
 PostgreSQL
     |
     v
-Extractors            (sql_dump/extractor/)
+Extractors            (pgcarter/extractor/)
     |
     v
-Metadata Models       (sql_dump/models/)
+Metadata Models       (pgcarter/models/)
     |
     +----------------+----------------+
     |                |                |
     v                v                v
 SQL Generator     JSON Writer     Documentation
-(sql_dump/sql/)   (writers/)      (docs/ renderer, Jinja2)
+(pgcarter/sql/)   (writers/)      (docs/ renderer, Jinja2)
     |
     v
-Analyzer              (sql_dump/analyzer/)
+Analyzer              (pgcarter/analyzer/)
 ```
 
 ## Design boundaries
@@ -37,7 +37,7 @@ Analyzer              (sql_dump/analyzer/)
 ## Package layout
 
 ```text
-sql_dump/
+pgcarter/
 ├── cli.py            # Typer entry point (index + analyze subcommands)
 ├── config.py         # configuration + defaults
 ├── main.py           # extraction orchestration
@@ -73,7 +73,7 @@ tables.
 ## Analysis
 
 Checks are **plugin-style**: each is a class registered with `@register` in
-`sql_dump/analyzer/rules.py`. The engine feeds each asset to the checks whose
+`pgcarter/analyzer/rules.py`. The engine feeds each asset to the checks whose
 scope matches it — tables to table checks, `(table, column)` pairs to column
 checks, the whole inventory to database checks — then merges results into the
 report. Every analysis query is validated read-only before execution

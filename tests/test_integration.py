@@ -3,12 +3,12 @@
 These are skipped unless a connection is configured via environment variables.
 Set the following to enable (all but password are required):
 
-    SQLDUMP_TEST_HOST, SQLDUMP_TEST_PORT, SQLDUMP_TEST_DB,
-    SQLDUMP_TEST_USER, SQLDUMP_TEST_PASSWORD
+    PGCARTER_TEST_HOST, PGCARTER_TEST_PORT, PGCARTER_TEST_DB,
+    PGCARTER_TEST_USER, PGCARTER_TEST_PASSWORD
 
 Example:
-    SQLDUMP_TEST_HOST=localhost SQLDUMP_TEST_DB=postgres \\
-    SQLDUMP_TEST_USER=postgres pytest -m integration
+    PGCARTER_TEST_HOST=localhost PGCARTER_TEST_DB=postgres \\
+    PGCARTER_TEST_USER=postgres pytest -m integration
 """
 
 from __future__ import annotations
@@ -19,27 +19,27 @@ from pathlib import Path
 
 import pytest
 
-from sql_dump.analyzer import AnalysisEngine, load_analysis_config
-from sql_dump.config import resolve_config
-from sql_dump.extractor import Database, InventoryExtractor
-from sql_dump.main import run
-from sql_dump.report import Report
+from pgcarter.analyzer import AnalysisEngine, load_analysis_config
+from pgcarter.config import resolve_config
+from pgcarter.extractor import Database, InventoryExtractor
+from pgcarter.main import run
+from pgcarter.report import Report
 
 pytestmark = pytest.mark.integration
 
-_REQUIRED = ("SQLDUMP_TEST_HOST", "SQLDUMP_TEST_DB", "SQLDUMP_TEST_USER")
+_REQUIRED = ("PGCARTER_TEST_HOST", "PGCARTER_TEST_DB", "PGCARTER_TEST_USER")
 
 
 def _config(tmp_path: Path):
     if not all(os.environ.get(k) for k in _REQUIRED):
-        pytest.skip("Live PostgreSQL connection not configured (SQLDUMP_TEST_* unset)")
+        pytest.skip("Live PostgreSQL connection not configured (PGCARTER_TEST_* unset)")
     templates = Path(__file__).resolve().parents[1] / "templates"
     return resolve_config(
-        host=os.environ["SQLDUMP_TEST_HOST"],
-        port=int(os.environ.get("SQLDUMP_TEST_PORT", "5432")),
-        database=os.environ["SQLDUMP_TEST_DB"],
-        user=os.environ["SQLDUMP_TEST_USER"],
-        password=os.environ.get("SQLDUMP_TEST_PASSWORD"),
+        host=os.environ["PGCARTER_TEST_HOST"],
+        port=int(os.environ.get("PGCARTER_TEST_PORT", "5432")),
+        database=os.environ["PGCARTER_TEST_DB"],
+        user=os.environ["PGCARTER_TEST_USER"],
+        password=os.environ.get("PGCARTER_TEST_PASSWORD"),
         output_dir=str(tmp_path / "inventory"),
         templates_dir=str(templates),
     )
@@ -106,7 +106,7 @@ def test_online_analysis_against_live_db(tmp_path):
 
 def test_offline_analysis_from_inventory_json(tmp_path):
     """Running the extractor then analysing its JSON output works offline."""
-    from sql_dump.analyzer import load_inventory
+    from pgcarter.analyzer import load_inventory
 
     config = _config(tmp_path)
     run(config)  # produces <output>/json/*.json
@@ -117,7 +117,7 @@ def test_offline_analysis_from_inventory_json(tmp_path):
     assert analysis.mode == "offline"
     assert analysis.database == config.database
     # Every query the offline run generated is read-only.
-    from sql_dump.analyzer.queries import assert_safe
+    from pgcarter.analyzer.queries import assert_safe
 
     for sql in engine.ctx.generated_queries:
         assert_safe(sql)

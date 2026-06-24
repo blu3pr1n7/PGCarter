@@ -1,11 +1,11 @@
 [project]
-name = "sql-dump"
+name = "pgcarter"
 version = "0.1.0"
 description = "PostgreSQL schema inventory, SQL extraction, and documentation generation tool"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
-authors = [{ name = "sql-dump contributors" }]
+authors = [{ name = "pgcarter contributors" }]
 keywords = ["postgresql", "schema", "ddl", "documentation", "inventory"]
 dependencies = [
     "psycopg[binary]>=3.1",
@@ -28,14 +28,14 @@ docs = [
 ]
 
 [project.scripts]
-sql-dump = "sql_dump.cli:main"
+pgcarter = "pgcarter.cli:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["sql_dump"]
+packages = ["pgcarter"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

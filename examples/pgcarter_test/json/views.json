@@ -1,0 +1,159 @@
+[
+  {
+    "schema": "public",
+    "name": "active_customers",
+    "owner": "pgcarter",
+    "definition": "SELECT c.id,\n    c.email,\n    o.name AS org_name\n   FROM customer c\n     JOIN org o ON o.id = c.org_id\n  WHERE c.status = 'active'::text;",
+    "materialized": false,
+    "comment": "Active customers with their organisation name",
+    "columns": [
+      "id",
+      "email",
+      "org_name"
+    ],
+    "grants": [
+      {
+        "object_type": "table",
+        "object_name": "public.active_customers",
+        "grantee": "app_readonly",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.active_customers",
+        "grantee": "pgcarter",
+        "privilege": "DELETE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.active_customers",
+        "grantee": "pgcarter",
+        "privilege": "INSERT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.active_customers",
+        "grantee": "pgcarter",
+        "privilege": "REFERENCES",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.active_customers",
+        "grantee": "pgcarter",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.active_customers",
+        "grantee": "pgcarter",
+        "privilege": "TRIGGER",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.active_customers",
+        "grantee": "pgcarter",
+        "privilege": "TRUNCATE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.active_customers",
+        "grantee": "pgcarter",
+        "privilege": "UPDATE",
+        "grantable": false,
+        "column": null
+      }
+    ]
+  },
+  {
+    "schema": "public",
+    "name": "customer_counts",
+    "owner": "pgcarter",
+    "definition": "SELECT org_id,\n    count(*) AS total\n   FROM customer\n  GROUP BY org_id;",
+    "materialized": true,
+    "comment": null,
+    "columns": [
+      "org_id",
+      "total"
+    ],
+    "grants": [
+      {
+        "object_type": "table",
+        "object_name": "public.customer_counts",
+        "grantee": "app_readonly",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer_counts",
+        "grantee": "pgcarter",
+        "privilege": "DELETE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer_counts",
+        "grantee": "pgcarter",
+        "privilege": "INSERT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer_counts",
+        "grantee": "pgcarter",
+        "privilege": "REFERENCES",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer_counts",
+        "grantee": "pgcarter",
+        "privilege": "SELECT",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer_counts",
+        "grantee": "pgcarter",
+        "privilege": "TRIGGER",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer_counts",
+        "grantee": "pgcarter",
+        "privilege": "TRUNCATE",
+        "grantable": false,
+        "column": null
+      },
+      {
+        "object_type": "table",
+        "object_name": "public.customer_counts",
+        "grantee": "pgcarter",
+        "privilege": "UPDATE",
+        "grantable": false,
+        "column": null
+      }
+    ]
+  }
+]

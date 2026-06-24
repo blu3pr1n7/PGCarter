@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from sql_dump.models import (
+from pgcarter.models import (
     Column,
     Constraint,
     DatabaseInfo,

@@ -12,7 +12,7 @@ import logging
 import pytest
 import structlog
 
-from sql_dump.logging_config import _env_bool, configure_logging, get_logger
+from pgcarter.logging_config import _env_bool, configure_logging, get_logger
 
 
 @pytest.fixture(autouse=True)
@@ -99,14 +99,14 @@ def test_exception_serialises_in_json_mode(capsys):
 
 def test_contextvars_appear_in_every_event(capsys):
     configure_logging(pretty_logs=False)
-    structlog.contextvars.bind_contextvars(service="sql-dump", request_id="abc123")
+    structlog.contextvars.bind_contextvars(service="pgcarter", request_id="abc123")
     get_logger("test.ctx").info("first")
     get_logger("test.ctx").info("second")
 
     records = _json_lines(capsys.readouterr().out)
     assert len(records) == 2
     for record in records:
-        assert record["service"] == "sql-dump"
+        assert record["service"] == "pgcarter"
         assert record["request_id"] == "abc123"
 
 

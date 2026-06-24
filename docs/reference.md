@@ -6,25 +6,25 @@ public entry points; browse the source for the full surface.
 
 ## Configuration
 
-::: sql_dump.config
+::: pgcarter.config
 
 ## Metadata models
 
 The dataclasses below are the single source of truth shared by the SQL
 generation, JSON, and documentation layers.
 
-::: sql_dump.models
+::: pgcarter.models
 
 ## Run report
 
-::: sql_dump.report
+::: pgcarter.report
 
 ## Logging
 
-::: sql_dump.logging_config
+::: pgcarter.logging_config
 
 ## Analysis engine
 
-::: sql_dump.analyzer.config
+::: pgcarter.analyzer.config
 
-::: sql_dump.analyzer.engine
+::: pgcarter.analyzer.engine

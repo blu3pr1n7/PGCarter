@@ -17,12 +17,12 @@ The password may be supplied with `--password` or via `PGPASSWORD`:
 
 ```bash
 export PGPASSWORD=secret
-sql-dump index --database mydb --user app
+pgcarter index --database mydb --user app
 ```
 
 ## Analysis configuration
 
-`sql-dump analyze` accepts a YAML config selecting which checks run and tuning
+`pgcarter analyze` accepts a YAML config selecting which checks run and tuning
 thresholds:
 
 ```yaml
@@ -41,7 +41,7 @@ analysis:
 ```
 
 ```bash
-sql-dump analyze --input ./inventory/json --config analysis.yml
+pgcarter analyze --input ./inventory/json --config analysis.yml
 ```
 
 A ready-to-edit example ships as `analysis.yml` in the repository root.
@@ -65,16 +65,16 @@ ELK/OpenSearch, CloudWatch, Loki, …).
 
 ```json
 {"event": "database_connecting", "host": "localhost", "database": "mydb",
- "level": "info", "logger": "sql_dump.extractor.connection",
+ "level": "info", "logger": "pgcarter.extractor.connection",
  "timestamp": "2026-06-23T10:30:00.123456Z"}
 ```
 
 For local development, enable colourised console output:
 
 ```bash
-sql-dump index --database mydb --pretty
+pgcarter index --database mydb --pretty
 # or, for any invocation:
-LOG_PRETTY=true LOG_LEVEL=DEBUG sql-dump analyze --input ./inventory/json
+LOG_PRETTY=true LOG_LEVEL=DEBUG pgcarter analyze --input ./inventory/json
 ```
 
 | Setting | Production (default) | Local dev |
@@ -88,7 +88,7 @@ through the same pipeline. Attach request/job correlation with contextvars:
 
 ```python
 import structlog
-structlog.contextvars.bind_contextvars(service="sql-dump", request_id="abc123")
+structlog.contextvars.bind_contextvars(service="pgcarter", request_id="abc123")
 ```
 
 !!! warning "Never log sensitive data"
