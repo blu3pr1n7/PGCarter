@@ -4,6 +4,15 @@
 
 <h1 align="center">pgcarter</h1>
 
+<p align="center">
+  <a href="https://github.com/blu3pr1n7/pgcarter/actions/workflows/ci.yml"><img src="https://github.com/blu3pr1n7/pgcarter/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://blu3pr1n7.github.io/pgcarter/"><img src="https://github.com/blu3pr1n7/pgcarter/actions/workflows/docs.yml/badge.svg" alt="Docs"></a>
+  <a href="https://pypi.org/project/pgcarter/"><img src="https://img.shields.io/pypi/v/pgcarter.svg" alt="PyPI"></a>
+  <img src="https://img.shields.io/badge/python-3.12%2B-blue.svg" alt="Python 3.12+">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-green.svg" alt="License: Apache 2.0"></a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
+</p>
+
 A production-quality PostgreSQL **schema inventory, SQL extraction,
 documentation generation, and database-shape analysis** tool. `pgcarter` is
 both a schema extraction tool and a lightweight database discovery and
