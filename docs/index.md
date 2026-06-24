@@ -1,5 +1,9 @@
 # pgcarter
 
+<p align="center">
+  <img src="assets/logo.png" alt="pgcarter mascot — a blue elephant archaeologist excavating a database schema" width="220">
+</p>
+
 A production-quality PostgreSQL **schema inventory, SQL extraction,
 documentation generation, and database shape-analysis** tool — a lightweight
 PostgreSQL discovery and profiling platform.

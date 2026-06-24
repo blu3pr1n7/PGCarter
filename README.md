@@ -1,4 +1,8 @@
-# pgcarter
+<p align="center">
+  <img src="docs/assets/logo.png" alt="pgcarter" width="200">
+</p>
+
+<h1 align="center">pgcarter</h1>
 
 A production-quality PostgreSQL **schema inventory, SQL extraction,
 documentation generation, and database-shape analysis** tool. `pgcarter` is
