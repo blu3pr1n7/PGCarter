@@ -38,10 +38,13 @@ This installs the package in editable mode along with the development tools
 (`pytest`, `ruff`, `mypy`).
 
 !!! tip "Package install"
-    Once published to an index, installation will be the usual:
+    Once published to an index, installation is the usual:
 
     ```bash
     pip install pgcarter
+    # or with uv:
+    uv pip install pgcarter   # into an active venv
+    uv add pgcarter           # into a uv-managed project
     ```
 
 ## Verify the installation
@@ -62,7 +65,7 @@ You should see the two subcommands, `index` and `analyze`.
 | `docs` | mkdocs-material, mkdocstrings | building this documentation site locally |
 
 ```bash
-pip install -e ".[docs]"   # to build the docs site
+uv pip install -e ".[docs]"   # to build the docs site (or: pip install -e ".[docs]")
 ```
 
 ## Next steps

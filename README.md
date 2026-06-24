@@ -23,7 +23,7 @@ profiling platform.
 ## Quick start
 
 ```bash
-pip install -e .
+uv pip install -e .          # or: pip install -e .
 
 # 1. Extract a schema inventory (SQL + JSON + docs)
 pgcarter index --database mydb --output-dir ./inventory
@@ -444,7 +444,7 @@ Pages: <https://blu3pr1n7.github.io/PGCarter/>.
 Build or preview it locally:
 
 ```bash
-pip install -e ".[docs]"
+uv pip install -e ".[docs]"   # or: make docs
 make docs-serve     # live preview at http://127.0.0.1:8000
 make docs-build     # strict build (fails on warnings/broken links)
 ```

@@ -54,7 +54,7 @@ functions are typed (`mypy` runs with `disallow_untyped_defs`).
 ## Building the docs site locally
 
 ```bash
-pip install -e ".[docs]"
+uv pip install -e ".[docs]"   # or: make docs
 mkdocs serve              # live-reload preview at http://127.0.0.1:8000
 mkdocs build --strict     # production build (fails on warnings/broken links)
 ```
