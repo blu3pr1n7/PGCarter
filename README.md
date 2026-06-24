@@ -9,7 +9,7 @@ documentation generation, and database-shape analysis** tool. `pgcarter` is
 both a schema extraction tool and a lightweight database discovery and
 profiling platform.
 
-📖 **Full documentation: <https://blu3pr1n7.github.io/pgcarter/>**
+📖 **Full documentation: <https://blu3pr1n7.github.io/PGCarter/>**
 
 ## Quick start
 

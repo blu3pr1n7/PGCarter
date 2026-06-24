@@ -72,9 +72,7 @@ class MissingForeignKeyIndexCheck(DatabaseCheck):
                 cols = constraint_columns(fk)
                 if not cols:
                     continue
-                covered = any(
-                    idx.columns[: len(cols)] == cols for idx in indexes if idx.columns
-                )
+                covered = any(idx.columns[: len(cols)] == cols for idx in indexes if idx.columns)
                 if not covered:
                     results.append(
                         self.result(

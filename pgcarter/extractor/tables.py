@@ -101,9 +101,7 @@ class TableExtractor(Extractor):
                 )
             )
         self.report.record_extracted("tables", len(tables))
-        self.report.record_extracted(
-            "constraints", sum(len(t.constraints) for t in tables)
-        )
+        self.report.record_extracted("constraints", sum(len(t.constraints) for t in tables))
         return tables
 
     def _columns(self, params: dict) -> dict[int, list[Column]]:

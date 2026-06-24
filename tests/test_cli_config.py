@@ -15,16 +15,26 @@ runner = CliRunner()
 
 def test_output_dir_defaults_to_database_name():
     cfg = resolve_config(
-        host="h", port=5432, database="mydb", user="u", password="p",
-        output_dir=None, templates_dir=None,
+        host="h",
+        port=5432,
+        database="mydb",
+        user="u",
+        password="p",
+        output_dir=None,
+        templates_dir=None,
     )
     assert cfg.output_dir == Path("mydb")
 
 
 def test_templates_dir_default():
     cfg = resolve_config(
-        host="h", port=5432, database="mydb", user="u", password="p",
-        output_dir="out", templates_dir=None,
+        host="h",
+        port=5432,
+        database="mydb",
+        user="u",
+        password="p",
+        output_dir="out",
+        templates_dir=None,
     )
     assert cfg.templates_dir == Path("./templates")
 
@@ -32,16 +42,26 @@ def test_templates_dir_default():
 def test_password_falls_back_to_env(monkeypatch):
     monkeypatch.setenv("PGPASSWORD", "fromenv")
     cfg = resolve_config(
-        host="h", port=5432, database="mydb", user="u", password=None,
-        output_dir="out", templates_dir="t",
+        host="h",
+        port=5432,
+        database="mydb",
+        user="u",
+        password=None,
+        output_dir="out",
+        templates_dir="t",
     )
     assert cfg.password == "fromenv"
 
 
 def test_conninfo_includes_core_fields():
     cfg = resolve_config(
-        host="h", port=5433, database="mydb", user="u", password="secret",
-        output_dir="out", templates_dir="t",
+        host="h",
+        port=5433,
+        database="mydb",
+        user="u",
+        password="secret",
+        output_dir="out",
+        templates_dir="t",
     )
     info = cfg.conninfo
     assert "host=h" in info
@@ -81,10 +101,14 @@ def test_analyze_offline_runs_end_to_end(tmp_path, sample_inventory):
         app,
         [
             "analyze",
-            "--input", str(inventory_dir),
-            "--output", str(out),
-            "--templates-dir", "./templates",
-            "--log-level", "WARNING",
+            "--input",
+            str(inventory_dir),
+            "--output",
+            str(out),
+            "--templates-dir",
+            "./templates",
+            "--log-level",
+            "WARNING",
         ],
     )
     assert result.exit_code == 0, result.output

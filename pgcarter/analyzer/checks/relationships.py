@@ -27,9 +27,7 @@ class HeavilyReferencedCheck(DatabaseCheck):
 
     def _online_counts(self, asset: Inventory, ctx: AnalysisContext) -> dict[str, int] | None:
         schemas = sorted({t.schema for t in asset.tables})
-        array_literal = (
-            "ARRAY[" + ", ".join(quote_literal(s) for s in schemas) + "]::text[]"
-        )
+        array_literal = "ARRAY[" + ", ".join(quote_literal(s) for s in schemas) + "]::text[]"
         sql = render_template("relationships.sql", schemas_literal=array_literal)
         rows = ctx.run(sql)
         if rows is None:
@@ -106,9 +104,7 @@ class OrphanRelationshipCheck(DatabaseCheck):
     category = "relationship"
     online_only = True
 
-    def _orphan_sql(
-        self, table: Table, fk: Constraint, ctx: AnalysisContext
-    ) -> str | None:
+    def _orphan_sql(self, table: Table, fk: Constraint, ctx: AnalysisContext) -> str | None:
         child_cols = constraint_columns(fk)
         parent_cols = list(fk.referenced_columns)
         if not child_cols or not fk.referenced_table:

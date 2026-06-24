@@ -48,18 +48,21 @@ class SqlWriter:
         return name
 
     def write(self, inv: Inventory) -> None:
-        self._write(self.sql_dir / "database.sql", inv.database.name,
-                    gen.database_sql(inv.database))
+        self._write(
+            self.sql_dir / "database.sql", inv.database.name, gen.database_sql(inv.database)
+        )
 
         if inv.extensions:
-            self._write(self.sql_dir / "extensions.sql", "extensions",
-                        gen.extensions_sql(inv.extensions))
+            self._write(
+                self.sql_dir / "extensions.sql", "extensions", gen.extensions_sql(inv.extensions)
+            )
         if inv.roles:
             self._write(self.sql_dir / "roles.sql", "roles", gen.roles_sql(inv.roles))
 
         for schema in inv.schemas:
-            self._write(self.sql_dir / "schemas" / f"{schema.name}.sql",
-                        schema.name, gen.schema_sql(schema))
+            self._write(
+                self.sql_dir / "schemas" / f"{schema.name}.sql", schema.name, gen.schema_sql(schema)
+            )
 
         self._write_per_schema(inv)
         self._write_permissions(inv)
@@ -69,37 +72,55 @@ class SqlWriter:
 
         for t in inv.tables:
             base = self._unique(used[f"{t.schema}/tables"], _slug(t.name))
-            self._write(self._schema_dir(t.schema, "tables") / f"{base}.sql",
-                        t.qualified_name, gen.table_sql(t))
+            self._write(
+                self._schema_dir(t.schema, "tables") / f"{base}.sql",
+                t.qualified_name,
+                gen.table_sql(t),
+            )
 
         for i in inv.indexes:
             if i.is_primary or i.is_constraint:
                 continue  # created as part of the table's constraints
             base = self._unique(used[f"{i.schema}/indexes"], _slug(i.name))
-            self._write(self._schema_dir(i.schema, "indexes") / f"{base}.sql",
-                        f"{i.schema}.{i.name}", gen.index_sql(i))
+            self._write(
+                self._schema_dir(i.schema, "indexes") / f"{base}.sql",
+                f"{i.schema}.{i.name}",
+                gen.index_sql(i),
+            )
 
         for v in inv.views:
             base = self._unique(used[f"{v.schema}/views"], _slug(v.name))
-            self._write(self._schema_dir(v.schema, "views") / f"{base}.sql",
-                        f"{v.schema}.{v.name}", gen.view_sql(v))
+            self._write(
+                self._schema_dir(v.schema, "views") / f"{base}.sql",
+                f"{v.schema}.{v.name}",
+                gen.view_sql(v),
+            )
 
         for f in inv.functions:
             base = self._unique(used[f"{f.schema}/functions"], _slug(f.name))
-            self._write(self._schema_dir(f.schema, "functions") / f"{base}.sql",
-                        f"{f.schema}.{f.signature}", gen.function_sql(f))
+            self._write(
+                self._schema_dir(f.schema, "functions") / f"{base}.sql",
+                f"{f.schema}.{f.signature}",
+                gen.function_sql(f),
+            )
 
         for trg in inv.triggers:
             base = self._unique(used[f"{trg.schema}/triggers"], _slug(trg.name))
-            self._write(self._schema_dir(trg.schema, "triggers") / f"{base}.sql",
-                        f"{trg.schema}.{trg.name}", gen.trigger_sql(trg))
+            self._write(
+                self._schema_dir(trg.schema, "triggers") / f"{base}.sql",
+                f"{trg.schema}.{trg.name}",
+                gen.trigger_sql(trg),
+            )
 
         for s in inv.sequences:
             if s.is_identity:
                 continue  # recreated by the owning table's IDENTITY clause
             base = self._unique(used[f"{s.schema}/sequences"], _slug(s.name))
-            self._write(self._schema_dir(s.schema, "sequences") / f"{base}.sql",
-                        f"{s.schema}.{s.name}", gen.sequence_sql(s))
+            self._write(
+                self._schema_dir(s.schema, "sequences") / f"{base}.sql",
+                f"{s.schema}.{s.name}",
+                gen.sequence_sql(s),
+            )
 
     def _write_permissions(self, inv: Inventory) -> None:
         # Group grants by (schema, local object name); database grants go top-level.

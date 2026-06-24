@@ -49,13 +49,36 @@ Contributions are welcome. This guide covers the workflow and expectations.
 
 ## Continuous integration
 
-| Workflow | Trigger | Does |
+| Workflow | Trigger | Jobs |
 | --- | --- | --- |
-| `tests.yml` | push / pull request | `pytest`, `ruff check`, `mypy` |
+| `ci.yml` | push to `master` / pull request | `quality` (ruff lint + format check + mypy), `unit` (pytest on 3.12 & 3.13 with coverage), `integration` (pytest against a PostgreSQL service), `build` (sdist/wheel + `twine check`) |
 | `docs.yml` | push to `master`, manual | `mkdocs build --strict` and deploy to GitHub Pages |
+| `release.yml` | push of a `v*` tag | build, verify, and publish to PyPI via Trusted Publishing |
 
-A documentation change that breaks a link, references a missing file, or fails
-the strict MkDocs build will fail CI.
+The four `ci.yml` jobs run in parallel, so lint/type/unit feedback arrives
+without waiting on the slower PostgreSQL job, and a failure points at exactly one
+concern. A documentation change that breaks a link or fails the strict MkDocs
+build also fails CI.
+
+### Reproduce CI locally
+
+Every CI check has a local equivalent:
+
+```bash
+make lint          # ruff check
+ruff format --check pgcarter tests
+make typecheck     # mypy pgcarter
+make test          # unit tests
+make test-all      # unit + integration (starts a dockerised PostgreSQL)
+make ci            # lint + format check + types + unit, in one go
+```
+
+### Recommended branch protection
+
+For `master`, require these status checks before merge: **`Lint, format &
+types`**, **`Unit tests (py3.12)`**, **`Unit tests (py3.13)`**, **`Integration
+tests (PostgreSQL)`**, and **`Build & verify package`**. Require branches to be
+up to date so checks run against the merge result.
 
 ## Reporting issues
 

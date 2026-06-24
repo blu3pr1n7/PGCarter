@@ -68,15 +68,9 @@ class InventoryExtractor:
         schemas_list = self._safe(
             "schemas", lambda: SchemaExtractor(db, schemas, report).extract(), []
         )
-        tables = self._safe(
-            "tables", lambda: TableExtractor(db, schemas, report).extract(), []
-        )
-        indexes = self._safe(
-            "indexes", lambda: IndexExtractor(db, schemas, report).extract(), []
-        )
-        views = self._safe(
-            "views", lambda: ViewExtractor(db, schemas, report).extract(), []
-        )
+        tables = self._safe("tables", lambda: TableExtractor(db, schemas, report).extract(), [])
+        indexes = self._safe("indexes", lambda: IndexExtractor(db, schemas, report).extract(), [])
+        views = self._safe("views", lambda: ViewExtractor(db, schemas, report).extract(), [])
         functions = self._safe(
             "functions", lambda: FunctionExtractor(db, schemas, report).extract(), []
         )
@@ -89,9 +83,7 @@ class InventoryExtractor:
         extensions = self._safe(
             "extensions", lambda: ExtensionExtractor(db, schemas, report).extract(), []
         )
-        roles = self._safe(
-            "roles", lambda: RoleExtractor(db, schemas, report).extract(), []
-        )
+        roles = self._safe("roles", lambda: RoleExtractor(db, schemas, report).extract(), [])
         grants = self._safe(
             "permissions", lambda: PermissionExtractor(db, schemas, report).extract(), []
         )

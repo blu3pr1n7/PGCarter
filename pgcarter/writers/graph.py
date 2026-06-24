@@ -17,8 +17,12 @@ _STYLE = {
 
 
 def relationships_dot(relationships: list[Relationship]) -> str:
-    lines = ["digraph relationships {", "    rankdir=LR;",
-             "    node [shape=box, fontname=\"Helvetica\"];", ""]
+    lines = [
+        "digraph relationships {",
+        "    rankdir=LR;",
+        '    node [shape=box, fontname="Helvetica"];',
+        "",
+    ]
     nodes: set[str] = set()
     for rel in relationships:
         nodes.add(rel.source)

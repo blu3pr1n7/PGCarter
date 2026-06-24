@@ -82,17 +82,13 @@ def load_inventory(input_dir: str | Path) -> Inventory:
     schemas = [_build(Schema, s) for s in (_read_json(json_dir / "schemas.json") or [])]
     indexes = [_build(Index, i) for i in (_read_json(json_dir / "indexes.json") or [])]
     relationships = [
-        _build(Relationship, r)
-        for r in (_read_json(json_dir / "relationships.json") or [])
+        _build(Relationship, r) for r in (_read_json(json_dir / "relationships.json") or [])
     ]
     grants = [_build(Grant, g) for g in (_read_json(json_dir / "permissions.json") or [])]
 
     if not schemas:
         # Derive schema list from the tables when schemas.json is absent.
-        schemas = [
-            Schema(name=name, owner="")
-            for name in sorted({t.schema for t in tables})
-        ]
+        schemas = [Schema(name=name, owner="") for name in sorted({t.schema for t in tables})]
 
     return Inventory(
         database=database,

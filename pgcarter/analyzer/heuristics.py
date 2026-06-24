@@ -61,9 +61,7 @@ _TIMESTAMP_NAME_RE = re.compile(
     r"|_at$|_on$|^timestamp$|^date$|_date$|_timestamp$",
     re.I,
 )
-_FRESHNESS_NAME_RE = re.compile(
-    r"^(created|updated|inserted|modified)(_at|_on)?$", re.I
-)
+_FRESHNESS_NAME_RE = re.compile(r"^(created|updated|inserted|modified)(_at|_on)?$", re.I)
 _EMAIL_RE = re.compile(r"^e?mail(_address)?$|_email$", re.I)
 _STATUS_RE = re.compile(r"^(status|state|type|category|kind|mode)$|_status$|_type$", re.I)
 

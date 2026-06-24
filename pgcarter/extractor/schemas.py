@@ -21,9 +21,6 @@ class SchemaExtractor(Extractor):
 
     def extract(self) -> list[Schema]:
         rows = self.db.query(_QUERY, {"schemas": self.schemas})
-        schemas = [
-            Schema(name=r["name"], owner=r["owner"], comment=r["comment"])
-            for r in rows
-        ]
+        schemas = [Schema(name=r["name"], owner=r["owner"], comment=r["comment"]) for r in rows]
         self.report.record_extracted("schemas", len(schemas))
         return schemas

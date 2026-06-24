@@ -80,9 +80,7 @@ class AnalysisEngine:
         total_tables = len(self.inventory.tables)
         for index, table in enumerate(self.inventory.tables, start=1):
             queried = (
-                f"; {len(self.ctx.generated_queries)} queries so far"
-                if self.ctx.online
-                else ""
+                f"; {len(self.ctx.generated_queries)} queries so far" if self.ctx.online else ""
             )
             log.info(
                 "[%d/%d] analyzing %s (%d columns)%s",
@@ -115,9 +113,7 @@ class AnalysisEngine:
 
         # Database-scope checks (relationships, indexes, cross-table quality).
         for index, check in enumerate(database_checks, start=1):
-            log.info(
-                "[db %d/%d] running %s", index, len(database_checks), check.name
-            )
+            log.info("[db %d/%d] running %s", index, len(database_checks), check.name)
             for r in self._safe_execute(check, self.inventory):
                 all_results.append(r)
                 if r.table and r.table in analyses:

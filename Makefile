@@ -1,6 +1,6 @@
-.PHONY: help install dev lint format typecheck test test-unit test-integration \
-        test-all coverage clean run analyze db-up db-down db-logs db-psql e2e \
-        e2e-analyze docs docs-serve docs-build
+.PHONY: help install dev lint format format-check typecheck ci test test-unit \
+        test-integration test-all coverage clean run analyze db-up db-down \
+        db-logs db-psql e2e e2e-analyze docs docs-serve docs-build
 
 PYTHON ?= .venv/bin/python
 UV ?= uv
@@ -30,8 +30,17 @@ format:  ## Auto-format with ruff
 	$(PYTHON) -m ruff format pgcarter tests
 	$(PYTHON) -m ruff check --fix pgcarter tests
 
+format-check:  ## Verify formatting without changing files (CI gate)
+	$(PYTHON) -m ruff format --check pgcarter tests
+
 typecheck:  ## Run mypy
 	$(PYTHON) -m mypy pgcarter
+
+ci:  ## Run the fast CI gate locally (lint + format check + types + unit)
+	$(PYTHON) -m ruff check pgcarter tests
+	$(PYTHON) -m ruff format --check pgcarter tests
+	$(PYTHON) -m mypy pgcarter
+	$(PYTHON) -m pytest -m "not integration"
 
 test: test-unit  ## Run the unit test suite (alias)
 

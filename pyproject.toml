@@ -44,6 +44,19 @@ markers = [
 ]
 addopts = "-ra"
 
+[tool.coverage.run]
+source = ["pgcarter"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+
 [tool.mypy]
 python_version = "3.12"
 warn_unused_configs = true

@@ -11,8 +11,20 @@ import re
 
 _SIMPLE_IDENT = re.compile(r"^[a-z_][a-z0-9_]*$")
 _RESERVED = {
-    "user", "table", "select", "from", "where", "order", "group", "all",
-    "default", "column", "constraint", "primary", "foreign", "references",
+    "user",
+    "table",
+    "select",
+    "from",
+    "where",
+    "order",
+    "group",
+    "all",
+    "default",
+    "column",
+    "constraint",
+    "primary",
+    "foreign",
+    "references",
 }
 
 

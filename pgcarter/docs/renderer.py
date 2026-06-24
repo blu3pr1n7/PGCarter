@@ -105,8 +105,7 @@ class DocumentationRenderer:
         if self._has("roles.md.j2"):
             self._render("roles.md.j2", "roles", self.docs_dir / "roles.md")
         if self._has("permissions.md.j2"):
-            self._render("permissions.md.j2", "permissions",
-                         self.docs_dir / "permissions.md")
+            self._render("permissions.md.j2", "permissions", self.docs_dir / "permissions.md")
 
         self._render_schemas(inv)
 
@@ -129,7 +128,9 @@ class DocumentationRenderer:
 
             if has_schema:
                 self._render(
-                    "schema.md.j2", sname, root / "schema.md",
+                    "schema.md.j2",
+                    sname,
+                    root / "schema.md",
                     schema=schema.to_dict(),
                     schema_tables=[t.to_dict() for t in tables],
                     schema_views=[v.to_dict() for v in views],
@@ -139,27 +140,42 @@ class DocumentationRenderer:
                 )
             if has_table:
                 for t in tables:
-                    self._render("table.md.j2", t.qualified_name,
-                                 root / "tables" / f"{t.name}.md",
-                                 table=t.to_dict(),
-                                 table_indexes=[i.to_dict() for i in idxs
-                                                if i.table == t.name])
+                    self._render(
+                        "table.md.j2",
+                        t.qualified_name,
+                        root / "tables" / f"{t.name}.md",
+                        table=t.to_dict(),
+                        table_indexes=[i.to_dict() for i in idxs if i.table == t.name],
+                    )
             if has_view:
                 for v in views:
-                    self._render("view.md.j2", f"{sname}.{v.name}",
-                                 root / "views" / f"{v.name}.md", view=v.to_dict())
+                    self._render(
+                        "view.md.j2",
+                        f"{sname}.{v.name}",
+                        root / "views" / f"{v.name}.md",
+                        view=v.to_dict(),
+                    )
             if has_func:
                 for f in funcs:
-                    self._render("function.md.j2", f"{sname}.{f.name}",
-                                 root / "functions" / f"{f.name}.md",
-                                 function=f.to_dict())
+                    self._render(
+                        "function.md.j2",
+                        f"{sname}.{f.name}",
+                        root / "functions" / f"{f.name}.md",
+                        function=f.to_dict(),
+                    )
             if has_trig:
                 for trig in trigs:
-                    self._render("trigger.md.j2", f"{sname}.{trig.name}",
-                                 root / "triggers" / f"{trig.name}.md",
-                                 trigger=trig.to_dict())
+                    self._render(
+                        "trigger.md.j2",
+                        f"{sname}.{trig.name}",
+                        root / "triggers" / f"{trig.name}.md",
+                        trigger=trig.to_dict(),
+                    )
             if has_index:
-                self._render("indexes.md.j2", f"{sname} indexes",
-                             root / "indexes" / "indexes.md",
-                             schema=schema.to_dict(),
-                             schema_indexes=[i.to_dict() for i in idxs])
+                self._render(
+                    "indexes.md.j2",
+                    f"{sname} indexes",
+                    root / "indexes" / "indexes.md",
+                    schema=schema.to_dict(),
+                    schema_indexes=[i.to_dict() for i in idxs],
+                )

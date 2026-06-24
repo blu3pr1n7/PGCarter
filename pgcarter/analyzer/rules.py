@@ -136,9 +136,7 @@ class AnalysisContext:
     # -- inventory helpers --------------------------------------------------
     def indexes_for(self, table: Table) -> list[Index]:
         return [
-            i
-            for i in self.inventory.indexes
-            if i.schema == table.schema and i.table == table.name
+            i for i in self.inventory.indexes if i.schema == table.schema and i.table == table.name
         ]
 
     def primary_key(self, table: Table) -> Constraint | None:

@@ -37,9 +37,11 @@ def test_table_constraints_are_ordered_pk_first(sample_table):
 
 def test_table_comments_emitted():
     table = Table(
-        schema="public", name="t", owner="o", comment="hello 'world'",
-        columns=[Column(name="c", position=1, data_type="int", nullable=True,
-                        comment="a column")],
+        schema="public",
+        name="t",
+        owner="o",
+        comment="hello 'world'",
+        columns=[Column(name="c", position=1, data_type="int", nullable=True, comment="a column")],
     )
     sql = gen.table_sql(table)
     assert "COMMENT ON TABLE public.t IS 'hello ''world''';" in sql

@@ -58,30 +58,37 @@ class RelationshipExtractor(Extractor):
         for trig in triggers:
             table_ref = f"{trig.schema}.{trig.table}"
             edges.append(
-                Relationship(source=table_ref, target=trig.name, type="trigger",
-                             label=trig.name)
+                Relationship(source=table_ref, target=trig.name, type="trigger", label=trig.name)
             )
             if trig.function:
                 edges.append(
-                    Relationship(source=trig.name, target=trig.function,
-                                 type="trigger_dependency", label="executes")
+                    Relationship(
+                        source=trig.name,
+                        target=trig.function,
+                        type="trigger_dependency",
+                        label="executes",
+                    )
                 )
 
         # Sequence ownership
         for seq in sequences:
             if seq.owned_by:
                 edges.append(
-                    Relationship(source=f"{seq.schema}.{seq.name}",
-                                 target=seq.owned_by, type="sequence",
-                                 label="owned by")
+                    Relationship(
+                        source=f"{seq.schema}.{seq.name}",
+                        target=seq.owned_by,
+                        type="sequence",
+                        label="owned by",
+                    )
                 )
 
         # View dependencies (catalog-driven)
         try:
             for r in self.db.query(_VIEW_DEPS, {"schemas": self.schemas}):
                 edges.append(
-                    Relationship(source=r["view"], target=r["source"],
-                                 type="view_dependency", label="reads")
+                    Relationship(
+                        source=r["view"], target=r["source"], type="view_dependency", label="reads"
+                    )
                 )
         except Exception as exc:  # pragma: no cover - defensive
             self.report.record_warning(f"Could not extract view dependencies: {exc}")

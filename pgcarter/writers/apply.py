@@ -67,9 +67,11 @@ def _ordered_views(views: list[View], inv: Inventory) -> list[View]:
 
 
 def build_apply_sql(inv: Inventory, timestamp: str) -> str:
-    sections: list[str] = [header(inv.database.name, "apply", timestamp).rstrip(),
-                           "-- Master script: applies the full schema in dependency order.",
-                           ""]
+    sections: list[str] = [
+        header(inv.database.name, "apply", timestamp).rstrip(),
+        "-- Master script: applies the full schema in dependency order.",
+        "",
+    ]
 
     def section(title: str, statements: list[str]) -> None:
         statements = [s for s in statements if s]
@@ -88,11 +90,10 @@ def build_apply_sql(inv: Inventory, timestamp: str) -> str:
     seqs = [s for s in inv.sequences if not s.is_identity]
     section("Sequences", [gen.sequence_create_sql(s) for s in seqs])
     section("Tables", [gen.table_sql(t) for t in _ordered_tables(inv.tables)])
-    section("Sequence ownership",
-            [o for s in seqs if (o := gen.sequence_owned_by_sql(s))])
-    section("Indexes",
-            [gen.index_sql(i) for i in inv.indexes
-             if not (i.is_primary or i.is_constraint)])
+    section("Sequence ownership", [o for s in seqs if (o := gen.sequence_owned_by_sql(s))])
+    section(
+        "Indexes", [gen.index_sql(i) for i in inv.indexes if not (i.is_primary or i.is_constraint)]
+    )
     section("Views", [gen.view_sql(v) for v in _ordered_views(inv.views, inv)])
     section("Functions", [gen.function_sql(f) for f in inv.functions])
     section("Triggers", [gen.trigger_sql(t) for t in inv.triggers])

@@ -99,9 +99,9 @@ def test_online_analysis_against_live_db(tmp_path):
     # At least one table should have measured size/row metrics from the DB.
     assert any("estimated_rows" in t.metrics for t in analysis.tables)
     # At least one column should carry executed profiling stats.
-    assert any(
-        c.stats for t in analysis.tables for c in t.columns
-    ), "expected profiling statistics on some column"
+    assert any(c.stats for t in analysis.tables for c in t.columns), (
+        "expected profiling statistics on some column"
+    )
 
 
 def test_offline_analysis_from_inventory_json(tmp_path):

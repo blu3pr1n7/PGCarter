@@ -133,12 +133,18 @@ def test_type_families():
 
 def test_constraint_column_parsing_from_definition():
     fk = Constraint(
-        name="t_fk", schema="public", table="t", type="FOREIGN KEY",
+        name="t_fk",
+        schema="public",
+        table="t",
+        type="FOREIGN KEY",
         definition="FOREIGN KEY (user_id) REFERENCES users(id)",
     )
     assert constraint_columns(fk) == ["user_id"]
     pk = Constraint(
-        name="t_pk", schema="public", table="t", type="PRIMARY KEY",
+        name="t_pk",
+        schema="public",
+        table="t",
+        type="PRIMARY KEY",
         definition="PRIMARY KEY (id)",
     )
     assert constraint_columns(pk) == ["id"]
@@ -242,9 +248,13 @@ class FakeDB:
     RESPONSES: dict[str, list[dict[str, Any]]] = {
         "pg_total_relation_size": [
             {
-                "total_bytes": 4096000, "table_bytes": 3000000, "index_bytes": 1096000,
-                "total_pretty": "4000 kB", "table_pretty": "2930 kB",
-                "index_pretty": "1070 kB", "estimated_rows": 1000,
+                "total_bytes": 4096000,
+                "table_bytes": 3000000,
+                "index_bytes": 1096000,
+                "total_pretty": "4000 kB",
+                "table_pretty": "2930 kB",
+                "index_pretty": "1070 kB",
+                "estimated_rows": 1000,
             }
         ],
         "FILTER (WHERE": [
@@ -294,15 +304,11 @@ def test_permission_denied_is_skipped_not_fatal(sample_inventory):
 
         def query(self, sql: str, params: Any = None) -> list[dict[str, Any]]:
             self.calls += 1
-            raise psycopg.errors.InsufficientPrivilege(
-                "permission denied for table customer"
-            )
+            raise psycopg.errors.InsufficientPrivilege("permission denied for table customer")
 
     db = DeniedDB()
     run_report = Report()
-    report = AnalysisEngine(
-        sample_inventory, AnalysisConfig(), db=db, report=run_report
-    ).analyze()
+    report = AnalysisEngine(sample_inventory, AnalysisConfig(), db=db, report=run_report).analyze()
 
     # No run errors — the denial is recorded as a skip, not an error.
     assert run_report.errors == []
@@ -315,9 +321,12 @@ def test_permission_denied_is_skipped_not_fatal(sample_inventory):
 
 def test_online_detects_critical_duplicate(sample_inventory):
     class DupDB(FakeDB):
-        RESPONSES = {**FakeDB.RESPONSES, "duplicate_groups": [
-            {"duplicate_groups": 2, "extra_rows": 3},
-        ]}
+        RESPONSES = {
+            **FakeDB.RESPONSES,
+            "duplicate_groups": [
+                {"duplicate_groups": 2, "extra_rows": 3},
+            ],
+        }
 
     report = AnalysisEngine(sample_inventory, AnalysisConfig(), db=DupDB()).analyze()
     severities = {w.severity for w in report.warnings}

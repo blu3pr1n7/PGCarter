@@ -1,4 +1,3 @@
-
 """Result models for the analysis subsystem.
 
 Like the extractor models, these are plain serialisable dataclasses: they are

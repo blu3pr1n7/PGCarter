@@ -22,9 +22,7 @@ class Report:
     """Accumulates the outcome of an extraction + generation run."""
 
     database: str = ""
-    started_at: str = field(
-        default_factory=lambda: datetime.now(UTC).isoformat()
-    )
+    started_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     finished_at: str | None = None
     extracted: dict[str, int] = field(default_factory=lambda: defaultdict(int))
     skipped: list[SkippedObject] = field(default_factory=list)

@@ -91,9 +91,7 @@ class RowCountCheck(TableCheck):
         # "unknown", not "empty". Fall back to an exact count only in that case,
         # so we never scan a table whose estimate is already trustworthy.
         if estimated < 0:
-            count_sql = assert_safe(
-                f"SELECT count(*) AS exact FROM {ctx.relation_expr(asset)}"
-            )
+            count_sql = assert_safe(f"SELECT count(*) AS exact FROM {ctx.relation_expr(asset)}")
             count_row = ctx.run_one(count_sql)
             if count_row is not None:
                 exact = int(count_row.get("exact") or 0)

@@ -148,8 +148,16 @@ def test_env_level_sets_threshold(capsys, monkeypatch):
 
 @pytest.mark.parametrize(
     ("value", "expected"),
-    [("true", True), ("1", True), ("YES", True), ("on", True),
-     ("false", False), ("0", False), ("", False), (None, False)],
+    [
+        ("true", True),
+        ("1", True),
+        ("YES", True),
+        ("on", True),
+        ("false", False),
+        ("0", False),
+        ("", False),
+        (None, False),
+    ],
 )
 def test_env_bool(value, expected, monkeypatch):
     if value is None:

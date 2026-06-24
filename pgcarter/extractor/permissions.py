@@ -10,8 +10,9 @@ from __future__ import annotations
 from pgcarter.extractor.base import Extractor
 from pgcarter.models import Grant
 
-_GRANTEE = "CASE WHEN acl.grantee = 0 THEN 'PUBLIC' " \
-           "ELSE pg_catalog.pg_get_userbyid(acl.grantee) END"
+_GRANTEE = (
+    "CASE WHEN acl.grantee = 0 THEN 'PUBLIC' ELSE pg_catalog.pg_get_userbyid(acl.grantee) END"
+)
 
 _DATABASE = f"""
 SELECT
@@ -99,9 +100,7 @@ class PermissionExtractor(Extractor):
         for r in self.db.query(_RELATION, params):
             grants.append(self._grant(r["object_type"], r["object_name"], r))
         for r in self.db.query(_COLUMN, params):
-            grants.append(
-                self._grant("column", r["object_name"], r, column=r["column_name"])
-            )
+            grants.append(self._grant("column", r["object_name"], r, column=r["column_name"]))
         for r in self.db.query(_FUNCTION, params):
             grants.append(self._grant("function", r["object_name"], r))
 

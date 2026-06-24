@@ -39,19 +39,17 @@ def database_sql(db: DatabaseInfo) -> str:
         f"    LC_CTYPE = '{db.ctype}';",
     ]
     if db.comment:
-        lines.append(
-            f"COMMENT ON DATABASE {quote_ident(db.name)} IS {_lit(db.comment)};"
-        )
+        lines.append(f"COMMENT ON DATABASE {quote_ident(db.name)} IS {_lit(db.comment)};")
     return "\n".join(lines)
 
 
 def schema_sql(schema: Schema) -> str:
-    lines = [f"CREATE SCHEMA IF NOT EXISTS {quote_ident(schema.name)}"
-             f" AUTHORIZATION {quote_ident(schema.owner)};"]
+    lines = [
+        f"CREATE SCHEMA IF NOT EXISTS {quote_ident(schema.name)}"
+        f" AUTHORIZATION {quote_ident(schema.owner)};"
+    ]
     if schema.comment:
-        lines.append(
-            f"COMMENT ON SCHEMA {quote_ident(schema.name)} IS {_lit(schema.comment)};"
-        )
+        lines.append(f"COMMENT ON SCHEMA {quote_ident(schema.name)} IS {_lit(schema.comment)};")
     if schema.grants:
         lines.append("")
         lines.extend(grant_statements(schema.grants))
@@ -89,8 +87,7 @@ def table_sql(table: Table) -> str:
     if table.comment:
         lines.append("")
         lines.append(
-            f"COMMENT ON TABLE {qualified(table.schema, table.name)} "
-            f"IS {_lit(table.comment)};"
+            f"COMMENT ON TABLE {qualified(table.schema, table.name)} IS {_lit(table.comment)};"
         )
     for col in table.columns:
         if col.comment:
@@ -114,8 +111,7 @@ def view_sql(view: View) -> str:
     if view.comment:
         lines.append("")
         lines.append(
-            f"COMMENT ON {keyword} {qualified(view.schema, view.name)} "
-            f"IS {_lit(view.comment)};"
+            f"COMMENT ON {keyword} {qualified(view.schema, view.name)} IS {_lit(view.comment)};"
         )
     return "\n".join(lines)
 
@@ -149,8 +145,7 @@ def sequence_create_sql(seq: Sequence) -> str:
         f"    MINVALUE {seq.min_value}",
         f"    MAXVALUE {seq.max_value}",
         f"    START WITH {seq.start}",
-        f"    CACHE {seq.cache}"
-        + ("\n    CYCLE" if seq.cycle else ""),
+        f"    CACHE {seq.cache}" + ("\n    CYCLE" if seq.cycle else ""),
     ]
     return "\n".join(lines) + ";"
 
@@ -202,9 +197,7 @@ def roles_sql(roles: list[Role]) -> str:
         for parent in role.member_of:
             lines.append(f"GRANT {quote_ident(parent)} TO {quote_ident(role.name)};")
         if role.comment:
-            lines.append(
-                f"COMMENT ON ROLE {quote_ident(role.name)} IS {_lit(role.comment)};"
-            )
+            lines.append(f"COMMENT ON ROLE {quote_ident(role.name)} IS {_lit(role.comment)};")
         lines.append("")
     return "\n".join(lines).rstrip()
 

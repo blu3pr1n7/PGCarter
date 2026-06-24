@@ -81,9 +81,7 @@ def run_analysis(
             analysis = AnalysisEngine(inventory, config, db=db, report=report).analyze()
     else:
         if not input_dir:
-            raise AnalysisInputError(
-                "provide --input (offline) or --database (online)"
-            )
+            raise AnalysisInputError("provide --input (offline) or --database (online)")
         inventory = load_inventory(input_dir)
         report.database = inventory.database.name
         analysis = AnalysisEngine(inventory, config, db=None, report=report).analyze()

@@ -50,9 +50,9 @@ def run(config: Config) -> Report:
     # --- Documentation generation (template-driven) -----------------------
     if config.templates_dir.is_dir():
         log.info("Rendering documentation from templates in %s", config.templates_dir)
-        DocumentationRenderer(
-            config.templates_dir, config.docs_dir, timestamp, report
-        ).render(inventory)
+        DocumentationRenderer(config.templates_dir, config.docs_dir, timestamp, report).render(
+            inventory
+        )
     else:
         msg = f"Templates directory '{config.templates_dir}' does not exist; skipping docs"
         log.warning(msg)

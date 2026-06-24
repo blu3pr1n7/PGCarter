@@ -48,9 +48,7 @@ def assert_safe(sql: str) -> str:
         raise UnsafeQueryError(f"Query does not start with SELECT/WITH: {sql!r}")
     forbidden = _FORBIDDEN_RE.search(scan)
     if forbidden:
-        raise UnsafeQueryError(
-            f"Query contains forbidden keyword '{forbidden.group(0)}': {sql!r}"
-        )
+        raise UnsafeQueryError(f"Query contains forbidden keyword '{forbidden.group(0)}': {sql!r}")
     return sql
 
 
@@ -123,12 +121,7 @@ def distribution_sql(relation_expr: str, column: str, *, numeric: bool = True) -
 def freshness_sql(relation_expr: str, column: str) -> str:
     """Earliest and latest value of a timestamp/date column."""
     col = quote_ident(column)
-    sql = (
-        "SELECT\n"
-        f"    min({col}) AS earliest,\n"
-        f"    max({col}) AS latest\n"
-        f"FROM {relation_expr}"
-    )
+    sql = f"SELECT\n    min({col}) AS earliest,\n    max({col}) AS latest\nFROM {relation_expr}"
     return assert_safe(sql)
 
 

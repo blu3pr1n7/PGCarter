@@ -33,11 +33,21 @@ class FakeDB:
 
 
 def test_database_extractor():
-    db = FakeDB({"pg_database": [{
-        "name": "shop", "version": "16.2", "encoding": "UTF8",
-        "collation": "en_US.UTF-8", "ctype": "en_US.UTF-8",
-        "owner": "postgres", "comment": None,
-    }]})
+    db = FakeDB(
+        {
+            "pg_database": [
+                {
+                    "name": "shop",
+                    "version": "16.2",
+                    "encoding": "UTF8",
+                    "collation": "en_US.UTF-8",
+                    "ctype": "en_US.UTF-8",
+                    "owner": "postgres",
+                    "comment": None,
+                }
+            ]
+        }
+    )
     report = Report()
     info = DatabaseExtractor(db, ["public"], report).extract()
     assert info.name == "shop"
@@ -46,25 +56,56 @@ def test_database_extractor():
 
 
 def test_table_extractor_groups_columns_and_constraints():
-    db = FakeDB({
-        "FROM pg_catalog.pg_class c\nJOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\nWHERE c.relkind IN ('r', 'p')\n  AND n.nspname": [
-            {"schema": "public", "name": "t", "owner": "o",
-             "kind": "table", "comment": None, "oid": 1},
-        ],
-        "JOIN pg_catalog.pg_attribute a": [
-            {"table_oid": 1, "name": "id", "position": 1, "data_type": "integer",
-             "nullable": False, "default": None, "identity": "d",
-             "generated": "", "comment": None},
-            {"table_oid": 1, "name": "label", "position": 2, "data_type": "text",
-             "nullable": True, "default": None, "identity": "",
-             "generated": "", "comment": None},
-        ],
-        "pg_get_constraintdef": [
-            {"table_oid": 1, "name": "t_pkey", "schema": "public", "table": "t",
-             "type": "p", "definition": "PRIMARY KEY (id)",
-             "referenced_schema": None, "referenced_table": None},
-        ],
-    })
+    db = FakeDB(
+        {
+            "FROM pg_catalog.pg_class c\nJOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\nWHERE c.relkind IN ('r', 'p')\n  AND n.nspname": [
+                {
+                    "schema": "public",
+                    "name": "t",
+                    "owner": "o",
+                    "kind": "table",
+                    "comment": None,
+                    "oid": 1,
+                },
+            ],
+            "JOIN pg_catalog.pg_attribute a": [
+                {
+                    "table_oid": 1,
+                    "name": "id",
+                    "position": 1,
+                    "data_type": "integer",
+                    "nullable": False,
+                    "default": None,
+                    "identity": "d",
+                    "generated": "",
+                    "comment": None,
+                },
+                {
+                    "table_oid": 1,
+                    "name": "label",
+                    "position": 2,
+                    "data_type": "text",
+                    "nullable": True,
+                    "default": None,
+                    "identity": "",
+                    "generated": "",
+                    "comment": None,
+                },
+            ],
+            "pg_get_constraintdef": [
+                {
+                    "table_oid": 1,
+                    "name": "t_pkey",
+                    "schema": "public",
+                    "table": "t",
+                    "type": "p",
+                    "definition": "PRIMARY KEY (id)",
+                    "referenced_schema": None,
+                    "referenced_table": None,
+                },
+            ],
+        }
+    )
     report = Report()
     tables = TableExtractor(db, ["public"], report).extract()
     assert len(tables) == 1
@@ -76,12 +117,25 @@ def test_table_extractor_groups_columns_and_constraints():
 
 
 def test_index_extractor():
-    db = FakeDB({"pg_get_indexdef": [
-        {"schema": "public", "name": "i1", "table": "t",
-         "definition": "CREATE INDEX i1 ON public.t (x)", "is_unique": False,
-         "is_primary": False, "is_constraint": False, "method": "btree",
-         "predicate": None, "columns": ["x"], "has_expressions": False},
-    ]})
+    db = FakeDB(
+        {
+            "pg_get_indexdef": [
+                {
+                    "schema": "public",
+                    "name": "i1",
+                    "table": "t",
+                    "definition": "CREATE INDEX i1 ON public.t (x)",
+                    "is_unique": False,
+                    "is_primary": False,
+                    "is_constraint": False,
+                    "method": "btree",
+                    "predicate": None,
+                    "columns": ["x"],
+                    "has_expressions": False,
+                },
+            ]
+        }
+    )
     report = Report()
     idx = IndexExtractor(db, ["public"], report).extract()
     assert idx[0].method == "btree"
@@ -89,20 +143,35 @@ def test_index_extractor():
 
 
 def test_permission_extractor_classifies_objects():
-    db = FakeDB({
-        "FROM pg_catalog.pg_database d": [
-            {"object_name": "shop", "grantee": "PUBLIC", "privilege": "CONNECT",
-             "grantable": False},
-        ],
-        "FROM pg_catalog.pg_namespace n,": [
-            {"object_name": "public", "grantee": "app", "privilege": "USAGE",
-             "grantable": False},
-        ],
-        "FROM pg_catalog.pg_class c\nJOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace,": [
-            {"object_name": "public.t", "object_type": "table", "grantee": "ro",
-             "privilege": "SELECT", "grantable": False},
-        ],
-    })
+    db = FakeDB(
+        {
+            "FROM pg_catalog.pg_database d": [
+                {
+                    "object_name": "shop",
+                    "grantee": "PUBLIC",
+                    "privilege": "CONNECT",
+                    "grantable": False,
+                },
+            ],
+            "FROM pg_catalog.pg_namespace n,": [
+                {
+                    "object_name": "public",
+                    "grantee": "app",
+                    "privilege": "USAGE",
+                    "grantable": False,
+                },
+            ],
+            "FROM pg_catalog.pg_class c\nJOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace,": [
+                {
+                    "object_name": "public.t",
+                    "object_type": "table",
+                    "grantee": "ro",
+                    "privilege": "SELECT",
+                    "grantable": False,
+                },
+            ],
+        }
+    )
     report = Report()
     grants = PermissionExtractor(db, ["public"], report).extract()
     kinds = {g.object_type for g in grants}
