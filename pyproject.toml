@@ -44,6 +44,26 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["pgcarter"]
 
+# Explicit allowlist for the source distribution: only these paths are
+# published. Anything else in the repo (examples/, assets/, dumps/, local
+# tooling, coverage/cache artifacts) is excluded by default — nothing
+# unexpected can leak into a release.
+[tool.hatch.build.targets.sdist]
+include = [
+    "/pgcarter",
+    "/tests",
+    "/templates",
+    "/docs",
+    "/mkdocs.yml",
+    "/analysis.yml",
+    "/docker-compose.yml",
+    "/Makefile",
+    "/README.md",
+    "/LICENSE",
+    "/NOTICE",
+    "/pyproject.toml",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = [
