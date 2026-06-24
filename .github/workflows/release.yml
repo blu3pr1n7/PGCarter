@@ -37,8 +37,15 @@ jobs:
     name: Publish to PyPI
     needs: build
     runs-on: ubuntu-latest
-    # Never attempt to publish from a fork.
-    if: github.repository == 'blu3pr1n7/pgcarter'
+    # Disabled while releases are cut manually with a token (e.g. release.fish):
+    # a tag push only runs the `build` sanity check, never a second publish.
+    # To switch to automated Trusted Publishing, set the repository variable
+    # ENABLE_PYPI_PUBLISH=true (Settings → Secrets and variables → Actions →
+    # Variables) and configure the PyPI trusted publisher for this workflow.
+    # Also never publishes from a fork.
+    if: >-
+      github.repository == 'blu3pr1n7/pgcarter'
+      && vars.ENABLE_PYPI_PUBLISH == 'true'
     environment:
       name: pypi
       url: https://pypi.org/p/pgcarter

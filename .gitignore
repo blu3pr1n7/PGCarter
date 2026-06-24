@@ -13,6 +13,7 @@ wheels/
 
 # Local tooling
 .claude/
+release.fish
 
 # Virtual environments
 .venv
