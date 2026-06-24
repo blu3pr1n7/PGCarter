@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/blu3pr1n7/pgcarter/actions/workflows/ci.yml"><img src="https://github.com/blu3pr1n7/pgcarter/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://blu3pr1n7.github.io/pgcarter/"><img src="https://github.com/blu3pr1n7/pgcarter/actions/workflows/docs.yml/badge.svg" alt="Docs"></a>
+  <a href="https://blu3pr1n7.github.io/PGCarter/"><img src="https://github.com/blu3pr1n7/pgcarter/actions/workflows/docs.yml/badge.svg" alt="Docs"></a>
   <a href="https://pypi.org/project/pgcarter/"><img src="https://img.shields.io/pypi/v/pgcarter.svg" alt="PyPI"></a>
   <img src="https://img.shields.io/badge/python-3.12%2B-blue.svg" alt="Python 3.12+">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-green.svg" alt="License: Apache 2.0"></a>
@@ -439,7 +439,7 @@ structlog.contextvars.bind_contextvars(service="pgcarter", request_id="abc123")
 
 The project documentation (this README's content plus installation, usage, CLI,
 architecture, and API reference) is published with **MkDocs Material** to GitHub
-Pages: <https://blu3pr1n7.github.io/pgcarter/>.
+Pages: <https://blu3pr1n7.github.io/PGCarter/>.
 
 Build or preview it locally:
 
